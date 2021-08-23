@@ -43,7 +43,7 @@ try
   SERVER_ID_READ =1910;% ID of the read packet
   DEBUG   = true;          % enables/disables debug prints
 
-  % Instantiate a packet - the following instruction allocates 64
+  % Instantiate a packet - the following instruction allocates 60
   % bytes for this purpose. Recall that the HID interface supports
   % packet sizes up to 64 bytes.
   packet = zeros(15, 1, 'single');
@@ -70,7 +70,7 @@ try
       toc
 
       if DEBUG
-          disp('Sent Packet:');
+          disp('Sent Packet:')
           disp(packet);
           disp('Received Packet:');
           disp(returnPacket);
@@ -80,6 +80,11 @@ try
       pause(1) 
       
   end
+  
+  % Closes then opens the gripper
+  pp.closeGripper()
+  pause(1)
+  pp.openGripper()
   
 catch exception
     getReport(exception)
