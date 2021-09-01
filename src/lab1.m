@@ -54,7 +54,7 @@ try
   viaPts = [0,75,0,25,0];
 
  
-  for k = viaPts
+  for k = viaPts %Alex
       tic
       packet = zeros(15, 1, 'single');
       packet(1) = 0;%one second time
