@@ -51,12 +51,13 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0,40,0];
+  viaPts = [0,75,0,25,0];
 
+ 
   for k = viaPts
       tic
       packet = zeros(15, 1, 'single');
-      packet(1) = 1000;%one second time
+      packet(1) = 0;%one second time
       packet(2) = 0;%linear interpolation
       packet(3) = k;
       packet(4) = 0;% Second link to 0
