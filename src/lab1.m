@@ -13,6 +13,7 @@
 
 % Lines 15-37 perform necessary library initializations. You can skip reading
 % to line 38.
+% Team 4: Rahil Parikh, Martin Bleakley, Alexander Breiling
 clear
 clear java
 clear classes;
