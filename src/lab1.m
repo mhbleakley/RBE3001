@@ -13,6 +13,7 @@
 
 % Lines 15-37 perform necessary library initializations. You can skip reading
 % to line 38.
+% Team 4: Rahil Parikh, Martin Bleakley, Alexander Breiling
 clear
 clear java
 clear classes;
@@ -51,6 +52,7 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
+
   viaPts = [0,0,0];
   pp.servo_jp(viaPts);
 %   for k = viaPts
