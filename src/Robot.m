@@ -111,5 +111,20 @@ classdef Robot < handle
             %pp.write sends a 15 float packet to the micro controller
             self.write(SERV_ID, packet);
         end
+        
+        % Moves servos to specific angles
+        function servo_jp(self, values)
+            SERV_ID = 1848;
+            packet = zeros(15, 1, 'single');
+            packet(1) = 0;% One second time
+            packet(2) = 0;% Linear interpolation
+            packet(3) = values(1);% First link
+            packet(4) = values(2);% Second link
+            packet(5) = values(3);% Third link
+
+            % Send packet to the server and get the response      
+            %pp.write sends a 15 float packet to the micro controller
+            self.write(SERV_ID, packet); 
+        end    
     end
 end
