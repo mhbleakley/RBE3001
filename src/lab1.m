@@ -55,8 +55,10 @@ try
 
   viaPts = [0,0,0];
   viaPts1 = [40,40,40];
-  pp.interpolate_jp(viaPts1,3000);
-  %pause(0.5)
+  pp.interpolate_jp(viaPts1, 3000);
+  pause(0.5)
+  pp.setpoint_js();
+
  % pp.measured_js(1,1);
 %   returnPacket = pp.read(SERVER_ID_READ);
 %   disp(returnPacket);
