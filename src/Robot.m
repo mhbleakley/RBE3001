@@ -101,6 +101,7 @@ classdef Robot < handle
         
         function packet = measured_js(self, GETPOS, GETVEL)
             packet = zeros(2, 3, 'single');
+          %  packet1 = zeros(1,9, 'single');
             if GETPOS
                 SERVER_ID_READ =1910;
                 returnPacket = self.read(SERVER_ID_READ);
@@ -115,7 +116,7 @@ classdef Robot < handle
                 packet(2,2) = returnPacket(5);
                 packet(2,3) = returnPacket(8);
             end
-            disp(packet);
+            %disp(packet);
         end
         
         function packet = setpoint_js(self)
@@ -150,8 +151,11 @@ classdef Robot < handle
             % Send packet to the server and get the response      
             %pp.write sends a 15 float packet to the micro controller
             self.write(SERV_ID, packet);
-            pause(0.5);
-            self.measured_js(1,1);
+
+        end
+        
+        function time = countMs(self)
+            
         end
         
         % Moves servos to specific angles

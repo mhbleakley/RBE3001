@@ -54,10 +54,31 @@ try
   % setpoints to the Nucleo firmware. 
 
   viaPts = [0,0,0];
-  viaPts1 = [40,40,40];
-  pp.interpolate_jp(viaPts, 3000);
-  pause(0.5)
-  pp.goal_js();
+  viaPts1 = [45,45,45];
+  x = 5000; 
+  pp.interpolate_jp(viaPts, 000);
+  pp.interpolate_jp(viaPts1, x);
+  position = zeros(x, 4);
+  
+  n = 0;
+  t0 = clock;
+  ms = 0;
+  ms1 = 0;
+  while ms <= x
+     if ms < ms1 +1
+         ms = round(etime(clock,t0) * 1000);
+         
+     else
+         measuredJoints = pp.measured_js(1,0);
+         position(ms, 1) = ms;
+         position(ms, 2) = measuredJoints(1, 1);
+         position(ms, 3) = measuredJoints(1, 2);
+         position(ms, 4) = measuredJoints(1, 3);
+         ms1 = ms;
+     end
+  end
+
+writematrix(position,'ArmData1.csv');
 
  % pp.measured_js(1,1);
 %   returnPacket = pp.read(SERVER_ID_READ);
