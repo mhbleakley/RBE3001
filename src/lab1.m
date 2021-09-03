@@ -53,8 +53,9 @@ try
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
 
-  viaPts = [0,0,0];
-  pp.servo_jp(viaPts);
+  viaPts = [0,20,0];
+  pp.interpolate_jp(viaPts,5000);
+%  pp.servo_jp(viaPts);
 %   for k = viaPts
 %       tic
 %       packet = zeros(15, 1, 'single');
@@ -87,6 +88,7 @@ try
 %   pp.closeGripper()
 %   pause(1)
 %   pp.openGripper()
+
   
 catch exception
     getReport(exception)
@@ -96,4 +98,4 @@ end
 % Clear up memory upon termination
 pp.shutdown()
 
-toc
+% toc

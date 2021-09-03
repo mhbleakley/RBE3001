@@ -99,6 +99,19 @@ classdef Robot < handle
             packet.writeGripper(0);
         end
         
+        function interpolate_jp(self, values, int)
+            SERV_ID = 1848;
+            packet = zeros(15, 1, 'single');
+            packet(1) = int;%one second time
+            packet(2) = 0;%linear interpolation
+            packet(3) = values(1);
+            packet(4) = values(2);% Second link to 0
+            packet(5) = values(3);% Third link to 0
+            % Send packet to the server and get the response      
+            %pp.write sends a 15 float packet to the micro controller
+            self.write(SERV_ID, packet);
+        end
+        
         % Moves servos to specific angles
         function servo_jp(self, values)
             SERV_ID = 1848;
