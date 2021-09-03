@@ -99,6 +99,25 @@ classdef Robot < handle
             packet.writeGripper(0);
         end
         
+        function packet = measured_js(self, GETPOS, GETVEL)
+            packet = zeros(2, 3, 'single');
+            if GETPOS
+                SERVER_ID_READ =1910;
+                returnPacket = self.read(SERVER_ID_READ);
+                packet(1,1) = returnPacket(3);
+                packet(1,2) = returnPacket(5);
+                packet(1,3) = returnPacket(7);
+            end
+            if GETVEL
+                SERVER_ID_READ =1822;
+                returnPacket = self.read(SERVER_ID_READ);
+                packet(2,1) = returnPacket(2);
+                packet(2,2) = returnPacket(5);
+                packet(2,3) = returnPacket(8);
+            end
+            disp(packet);
+        end
+        
         function interpolate_jp(self, values, int)
             SERV_ID = 1848;
             packet = zeros(15, 1, 'single');
@@ -110,6 +129,8 @@ classdef Robot < handle
             % Send packet to the server and get the response      
             %pp.write sends a 15 float packet to the micro controller
             self.write(SERV_ID, packet);
+            pause(0.5);
+            self.measured_js(1,1);
         end
         
         % Moves servos to specific angles
@@ -125,6 +146,9 @@ classdef Robot < handle
             % Send packet to the server and get the response      
             %pp.write sends a 15 float packet to the micro controller
             self.write(SERV_ID, packet); 
-        end    
+        end
+        
+        
+        
     end
 end
