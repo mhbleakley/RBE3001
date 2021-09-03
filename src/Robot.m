@@ -118,9 +118,20 @@ classdef Robot < handle
             disp(packet);
         end
         
-            function packet = setpoint_js(self)
+        function packet = setpoint_js(self)
             packet = zeros(1, 3, 'single');
                 SERVER_ID_READ =1910;
+                returnPacket = self.read(SERVER_ID_READ);
+                packet(1,1) = returnPacket(3);
+                packet(1,2) = returnPacket(4);
+                packet(1,3) = returnPacket(5);
+            disp(packet);
+        end
+        
+        
+        function packet = goal_js(self)
+            packet = zeros(1, 3, 'single');
+                SERVER_ID_READ =1848;
                 returnPacket = self.read(SERVER_ID_READ);
                 packet(1,1) = returnPacket(3);
                 packet(1,2) = returnPacket(4);
