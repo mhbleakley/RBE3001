@@ -53,8 +53,13 @@ try
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
 
-  viaPts = [0,20,0];
-  pp.interpolate_jp(viaPts,5000);
+  viaPts = [0,0,0];
+  viaPts1 = [40,40,40];
+  pp.interpolate_jp(viaPts1,3000);
+  %pause(0.5)
+ % pp.measured_js(1,1);
+%   returnPacket = pp.read(SERVER_ID_READ);
+%   disp(returnPacket);
 %  pp.servo_jp(viaPts);
 %   for k = viaPts
 %       tic
