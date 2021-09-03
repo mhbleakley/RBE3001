@@ -51,41 +51,8 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0,75,0,25,0];
-
- 
-  for k = viaPts
-      tic
-      packet = zeros(15, 1, 'single');
-      packet(1) = 0;%one second time
-      packet(2) = 0;%linear interpolation
-      packet(3) = k;
-      packet(4) = 0;% Second link to 0
-      packet(5) = 0;% Third link to 0
-
-      % Send packet to the server and get the response      
-      %pp.write sends a 15 float packet to the micro controller
-       pp.write(SERV_ID, packet); 
-       %pp.read reads a returned 15 float backet from the micro controller.
-       returnPacket = pp.read(SERVER_ID_READ);
-      toc
-
-      if DEBUG
-          disp('Sent Packet:')
-          disp(packet);
-          disp('Received Packet:');
-          disp(returnPacket);
-      end
-      
-      toc
-      pause(1) 
-      
-  end
-  
-  % Closes then opens the gripper
-  pp.closeGripper()
-  pause(1)
-  pp.openGripper()
+  viaPts = [0,20,0];
+  pp.interpolate_jp(viaPts,5000);
   
 catch exception
     getReport(exception)
@@ -95,4 +62,4 @@ end
 % Clear up memory upon termination
 pp.shutdown()
 
-toc
+% toc
