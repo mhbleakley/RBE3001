@@ -54,32 +54,73 @@ try
   % setpoints to the Nucleo firmware. 
 
   viaPts = [0,0,0];
-  viaPts1 = [45,45,45];
-  x = 5000; 
+  viaPts1 = [0,45,0];
+  x = 1200; 
   pp.interpolate_jp(viaPts, 000);
-  pp.interpolate_jp(viaPts1, x);
-  position = zeros(x, 4);
+  pause(0.5);
+  pp.interpolate_jp(viaPts1, 0);
+  position = zeros(x, 5);
   
   n = 0;
   t0 = clock;
   ms = 0;
   ms1 = 0;
+  i = 1;
   while ms <= x
-     if ms < ms1 +1
-         ms = round(etime(clock,t0) * 1000);
+%      if ms < ms1 +1
+%          ms = round(etime(clock,t0) * 1000);
          
-     else
+%      else
+         ms = etime(clock,t0) * 1000;
          measuredJoints = pp.measured_js(1,0);
-         position(ms, 1) = ms;
-         position(ms, 2) = measuredJoints(1, 1);
-         position(ms, 3) = measuredJoints(1, 2);
-         position(ms, 4) = measuredJoints(1, 3);
+         position(i, 1) = ms;
+         position(i, 2) = measuredJoints(1, 1);
+         position(i, 3) = measuredJoints(1, 2);
+         position(i, 4) = measuredJoints(1, 3);
+         if i > 1
+            position(i, 5) = position(i, 1) - position(i-1, 1);
+         end
          ms1 = ms;
-     end
+         i = i + 1;
+%      end
   end
 
-writematrix(position,'ArmData1.csv');
-
+ writematrix(position,'ArmData1.csv');
+ filename = 'ArmData1.csv';
+ M = csvread(filename);
+ time = M(:,1);
+ subplot(3,2,1);
+ y1 = M(:,2);
+ plot(time, y1);
+ title("Joint 1 Position vs Time");
+ xlabel('Time(ms)') ;
+ ylabel('Angle(degrees)'); 
+ subplot(3,2,2);
+ y2 = M(:,3);
+ plot(time, y2);
+ title("Joint 2 Position vs Time");
+ xlabel('Time(ms)') ;
+ ylabel('Angle(degrees)'); 
+ subplot(3,2,3);
+ y3 = M(:,4);
+ plot(time, y3);
+ title("Joint 3 Position vs Time");
+ xlabel('Time(ms)') ;
+ ylabel('Angle(degrees)'); 
+ 
+ subplot(3,2,5);
+ A = [M(3:end,5)];
+ histogram(A);
+ title("Reading increment frequency");
+ xlabel('Time(ms)') ;
+ ylabel('Frequency(Packets)');
+ 
+ subplot(3,2,6);
+ A = [M(3:end,5)];
+ histogram(A, 10);
+ title("Reading increment frequency (10 bins)");
+ xlabel('Time(ms)') ;
+ ylabel('Frequency(Packets)');
  % pp.measured_js(1,1);
 %   returnPacket = pp.read(SERVER_ID_READ);
 %   disp(returnPacket);
