@@ -53,14 +53,69 @@ try
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
 
+%   viaPts = [0,0,0];
+%   viaPts1 = [0,45,0];
+%   x = 1200; 
+%   pp.interpolate_jp(viaPts, 000);
+%   pause(0.5);
+%   pp.interpolate_jp(viaPts1, 0);
+%   position = zeros(x, 5);
+%   
+
+
+
+returnPacket = pp.read(SERVER_ID_READ);
+disp(returnPacket);
+
+% Position 1
+
+% 1  -51.1200
+
+% 2   61.6600
+
+% 3  -11.4100
+
+% Position 2
+
+%    -0.4800
+
+%    61.6600
+
+%    30.3500
+
+% Position 3
+
+%    14.4800
+
+%    69.6600
+
+%    -50.3500
+
+% Position 4
+
+%    82.4800
+
+%    54.6600
+
+%    66.3500
+
+
+
   viaPts = [0,0,0];
-  viaPts1 = [0,45,0];
-  x = 1200; 
-  pp.interpolate_jp(viaPts, 000);
-  pause(0.5);
-  pp.interpolate_jp(viaPts1, 0);
-  position = zeros(x, 5);
-  
+  viaPts1 = [-51.1200,61.6600,-11.4100];
+  viaPts2 = [-0.4800,61.6600,30.3500];
+  viaPts3 = [14.4800,69.6600,-50.3500];
+  viaPts4 = [82.4800,54.6600,66.3500];
+  x = 2000; 
+  pp.servo_jp(viaPts);
+%   pp.interpolate_jp(viaPts1, x);
+%   pp.interpolate_jp(viaPts2, x);
+%   pp.interpolate_jp(viaPts3, x);
+%   
+%   pp.servo_jp(viaPts4);
+  pp.interpolate_jp(viaPts4, x);
+
+
   n = 0;
   t0 = clock;
   ms = 0;
@@ -85,25 +140,40 @@ try
 %      end
   end
 
- writematrix(position,'ArmData1.csv');
+ writematrix(position,'ArmData2.csv');
  filename = 'ArmData1.csv';
+ filename2 = 'ArmData2.csv';
  M = csvread(filename);
+ N = csvread(filename2);
  time = M(:,1);
+ time2 = N(:,1);
  subplot(3,2,1);
  y1 = M(:,2);
  plot(time, y1);
+ hold on
+ serv1 = N(:,2);
+ plot(time2, serv1);
+ hold off
  title("Joint 1 Position vs Time");
  xlabel('Time(ms)') ;
  ylabel('Angle(degrees)'); 
  subplot(3,2,2);
  y2 = M(:,3);
  plot(time, y2);
+ hold on
+ serv2 = N(:,3);
+ plot(time2, serv2);
+ hold off
  title("Joint 2 Position vs Time");
  xlabel('Time(ms)') ;
  ylabel('Angle(degrees)'); 
  subplot(3,2,3);
  y3 = M(:,4);
  plot(time, y3);
+ hold on
+ serv3 = N(:,4);
+ plot(time2, serv3);
+ hold off
  title("Joint 3 Position vs Time");
  xlabel('Time(ms)') ;
  ylabel('Angle(degrees)'); 
@@ -121,6 +191,8 @@ try
  title("Reading increment frequency (10 bins)");
  xlabel('Time(ms)') ;
  ylabel('Frequency(Packets)');
+
+
  % pp.measured_js(1,1);
 %   returnPacket = pp.read(SERVER_ID_READ);
 %   disp(returnPacket);
