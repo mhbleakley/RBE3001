@@ -173,7 +173,36 @@ classdef Robot < handle
             self.write(SERV_ID, packet); 
         end
         
+        function T = trotz(self, theta)
+            T = [cos(theta) -sin(theta) 0 0;
+            sin(theta) cos(theta) 0 0;
+            0 0 1 0;
+            0 0 0 1;];
+        end
+
+        function T = trotx(self, theta)
+            T = [1 0 0 0;
+            0 cos(theta) -sin(theta) 0;
+            0 sin(theta) cos(theta) 0;
+            0 0 0 1;];
+        end
+
+        function T = troty(self, theta)
+            T = [cos(theta) 0 -sin(theta) 0;
+            0 1 0 0;
+            sin(theta) 0 cos(theta) 0;
+            0 0 0 1;];
+        end
         
+        function T = dh2mat(self, q)
+            T = self.trotz(q(1)) * [1 0 0 0;
+                          0 1 0 0;
+                          0 0 1 q(2);
+                          0 0 0 1;] * [1 0 0 q(3);
+                                       0 1 0 0;
+                                       0 0 1 0;
+                                       0 0 0 1;] * self.trotx(q(4));
+        end
         
     end
 end
