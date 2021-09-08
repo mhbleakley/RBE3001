@@ -46,8 +46,9 @@ try
 %   position = zeros(x, 5);
 %   
 
-pp.dh2mat([pi 5 5 pi])
-
+% pp.dh2mat([pi 5 5 pi])
+syms theta1 theta2
+pp.dh2fk([theta1 0 0 theta2; theta1 0 0 theta2])
   
 catch exception
     getReport(exception)
