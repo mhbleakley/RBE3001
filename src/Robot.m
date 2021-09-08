@@ -204,5 +204,26 @@ classdef Robot < handle
                                        0 0 0 1;] * self.trotx(q(4));
         end
         
+        function T = dh2fk(self, q)
+            L1 = 0.5;
+            L2 = 0.5;
+            L4= 0.1;
+            T = eye(4);
+            s0 = size(q); % size of row by col matrix
+            
+            s1 = s0(1); % number of rows in q
+            disp(s1)
+            M = cell(1, s1);
+%             i = 0;
+            for i = [1:s1]
+                row = q(i,:);
+                disp(row);
+                M{i} = self.dh2mat(row);
+                disp(M{i})
+            end  
+            for j = [1:size(M)]
+                T = T * M{i};
+            end
+        end        
     end
 end
