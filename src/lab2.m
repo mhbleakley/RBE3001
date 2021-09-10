@@ -47,8 +47,10 @@ try
 %   
 
 % pp.dh2mat([pi 5 5 pi])
-syms theta1 theta2 theta3 theta4
-pp.dh2fk([theta1 4 6 theta2;])
+syms theta1 theta2 theta3 theta4 d a
+%pp.dh2fk([[0 55 0 0; theta1 40 0 -pi/2; (theta2 -pi/2) 0 100 0; (theta3+pi/2) 0 100 0]])
+pp.fk3001([0 0 0]);
+%pp.dh2mat([pi/2 5 0 0])
   
 catch exception
     getReport(exception)
