@@ -202,26 +202,49 @@ classdef Robot < handle
                                        0 1 0 0;
                                        0 0 1 0;
                                        0 0 0 1;] * self.trotx(q(4));
+                                   %disp(T)
         end
         
         function T = dh2fk(self, q)
-            T = eye(4);
+
+            T = eye(4,4);
+  
+            
             s0 = size(q); % size of row by col matrix
             
             n = s0(1); % number of rows in q
-            M = cell(n, 1);
+            M = cell(n, n);
 %             i = 0;
             for i = [1:n]
                 row = q(i,:);
                 %disp(row);
                 M{i} = self.dh2mat(row);
                 
-            end  
-            for j = [1:size(M)]
-                T = T * M{i};
-                
             end
-            disp(T)
-        end        
+
+            a = size(M);
+            b = a(1);
+            for j = [1:b]
+                %disp(T);
+                T = T * M{j};
+                %disp(T);
+                 
+            end
+
+            %disp(T)
+            
+        end
+        
+        function T= fk3001(self, q)
+            T = [ cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(1))*cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(1))*cos(q(3) + pi/2)*sin(q(2) - pi/2), -sin(q(1)), 100*cos(q(1))*cos(q(2) - pi/2) + 100*cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - 100*cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
+                 cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(2) - pi/2)*sin(q(1))*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(1))*sin(q(2) - pi/2),  cos(q(1)), 100*cos(q(2) - pi/2)*sin(q(1)) + 100*cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - 100*sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
+                                       - cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(2) - pi/2),                           sin(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(2) - pi/2)*cos(q(3) + pi/2),            0,                                95 - 100*cos(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(3) + pi/2)*sin(q(2) - pi/2) - 100*sin(q(2) - pi/2);
+                                                                                                                    0,                                                                                                       0,            0,                                                                                                                                                  1];
+            disp(T);
+            
+        end
+            
+        
+        
     end
 end
