@@ -47,8 +47,8 @@ try
 %   
 
 % pp.dh2mat([pi 5 5 pi])
-syms theta1 theta2
-pp.dh2fk([theta1 0 0 theta2; theta1 0 0 theta2])
+syms theta1 theta2 theta3 theta4
+pp.dh2fk([theta1 4 6 theta2;])
   
 catch exception
     getReport(exception)
