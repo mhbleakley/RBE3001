@@ -243,7 +243,20 @@ classdef Robot < handle
             disp(T);
             
         end
-            
+        
+        function T = measured_cp(self)
+            M = zeros(3,1);
+            N = zeros(2,3);
+            N = self.measured_js(1,0)*(2*pi/360);
+            M(1,1) = N(1,1);
+            M(2,1) = N(1,2);
+            M(3,1) = N(1,3);
+            T = self.fk3001(M);
+        end
+        
+
+
+
         
         
     end

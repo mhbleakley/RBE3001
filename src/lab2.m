@@ -38,9 +38,9 @@ try
   % setpoints to the Nucleo firmware. 
 
 %   viaPts = [0,0,0];
-%   viaPts1 = [0,45,0];
+%   viaPts1 = [35,55,75];
 %   x = 1200; 
-%   pp.interpolate_jp(viaPts, 000);
+%   pp.interpolate_jp(viaPts1, x);
 %   pause(0.5);
 %   pp.interpolate_jp(viaPts1, 0);
 %   position = zeros(x, 5);
@@ -49,8 +49,16 @@ try
 % pp.dh2mat([pi 5 5 pi])
 syms theta1 theta2 theta3 theta4 d a
 %pp.dh2fk([[0 55 0 0; theta1 40 0 -pi/2; (theta2 -pi/2) 0 100 0; (theta3+pi/2) 0 100 0]])
-pp.fk3001([0 0 0]);
-%pp.dh2mat([pi/2 5 0 0])
+% pp.fk3001([0 0 0]);
+pp.servo_jp([10,40,23]);
+pause(1);
+pp.interpolate_jp([0,0,0],3000);
+tic
+while toc < 3.5
+   %%pp.goal_cp()
+   %pp.setpoint_cp();
+end
+
   
 catch exception
     getReport(exception)
