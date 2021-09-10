@@ -56,7 +56,7 @@ pp.interpolate_jp([0,0,0],3000);
 tic
 while toc < 3.5
    %%pp.goal_cp()
-   %pp.setpoint_cp();
+  pp.setpoint_cp();
 end
 
   
