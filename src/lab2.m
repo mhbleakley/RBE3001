@@ -50,16 +50,56 @@ try
 syms theta1 theta2 theta3 theta4 d a
 %pp.dh2fk([[0 55 0 0; theta1 40 0 -pi/2; (theta2 -pi/2) 0 100 0; (theta3+pi/2) 0 100 0]])
 % pp.fk3001([0 0 0]);
-pp.servo_jp([10,40,23]);
-pause(1);
-pp.interpolate_jp([0,0,0],3000);
-tic
-while toc < 3.5
-  pp.goal_cp()
-  %pp.setpoint_cp();
-end
 
-  
+% M = cell(10, 1);
+% for i = [1 : 10] 
+%     
+%     pp.interpolate_jp([15,20,30],1000);
+%     pause(2);
+%     pp.servo_jp([0,0,0]);
+%     pause(0.5);
+%     M{i} = pp.measured_cp();
+% 
+% end
+
+% for a = [1:10]
+%     disp(M{a})
+% end
+% 
+% writecell(M,'home_position.csv');
+filename = 'home_position.csv';
+% N = cell(10,1);
+N = csvread(filename);
+
+O = zeros(10,3);
+
+for i = [1:10]
+    O(i, 1) = N(i, 13);
+    O(i, 2) = N(i, 14);
+    O(i, 3) = N(i, 15);
+end 
+
+% disp(O)
+% 
+% for i = [1:10]
+%     plot3(O(i,1),O(i,2),O(i,3), 'o');
+%     hold on
+% end
+% hold off
+
+% tic
+% while toc < 1.5
+%   pp.goal_cp()
+%   pp.setpoint_cp();
+%     pp.measured_cp()
+% end
+
+mean_value = mean(O);
+rms_value = rms(O);
+
+disp(mean_value)
+disp(rms_value)
+
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');
