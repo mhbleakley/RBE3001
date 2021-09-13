@@ -219,6 +219,7 @@ classdef Robot < handle
                 row = q(i,:);
                 %disp(row);
                 M{i} = self.dh2mat(row);
+%                 disp(M{i})
                 
             end
 
@@ -272,8 +273,68 @@ classdef Robot < handle
             M(2,1) = N(1,2);
             M(3,1) = N(1,3);
             T = self.fk3001(M);
-        end
+            end
+        
+            function plot_arm(self,q)
+                
+                T01 =   [ 1, 0, 0,  0;
+                         0, 1, 0,  0;
+                         0, 0, 1, 55;
+                         0, 0, 0,  1];
+                
+                T12 =   [ cos(q(1)),  0, -sin(q(1)),  0;
+                         sin(q(1)),  0,  cos(q(1)),  0;
+                                   0, -1,            0, 40;
+                                   0,  0,            0,  1];
 
+                T23 =   [ cos(q(2) - pi/2), -sin(q(2) - pi/2), 0, 100*cos(q(2) - pi/2);
+                         sin(q(2) - pi/2),  cos(q(2) - pi/2), 0, 100*sin(q(2) - pi/2);
+                                          0,                   0, 1,                      0;
+                                          0,                   0, 0,                      1];
+
+
+                T34 =    [cos(q(3) + pi/2), -sin(q(3) + pi/2), 0, 100*cos(q(3) + pi/2);
+                         sin(q(3) + pi/2),  cos(q(3) + pi/2), 0, 100*sin(q(3) + pi/2);
+                                          0,                   0, 1,                      0;
+                                          0,                   0, 0,                      1];
+
+%                 base=[0 T01(1,4) T12(1,4) T23(1,4) T34(1,4)];
+%                 L1=[0 T01(2,4) T12(2,4) T23(2,4) T34(2,4)];
+%                 L2=[0 T01(3,4) T12(3,4) T23(3,4) T34(3,4)];
+%                 L3 =[E1;E2;E3];
+%                 endpos = fk3001(q);
+
+                 Point0 = [0; 0; 0; 1];
+                 Point1 = T01*Point0;
+%                  disp(Point1)
+                 Point2 = (T01*T12)*Point0; 
+%                  disp(Point2)
+                 Point3 = (T01*T12*T23)*Point0;
+%                  disp(Point3);
+                 Point4 = (T01*T12*T23*T34)*Point0;
+%                  disp(Point4)
+                 
+                 X = [Point0(1,1) Point1(1,1) Point2(1,1) Point3(1,1) Point4(1,1)];
+                 Y = [Point0(2,1) Point1(2,1) Point2(2,1) Point3(2,1) Point4(2,1)];
+                 Z = [Point0(3,1) Point1(3,1) Point2(3,1) Point3(3,1) Point4(3,1)];
+%                  L0 = [0; 0; 0];
+%                  L1 = L0+T01(1:3,4);
+%                  L2 = L1+T12(1:3,4);
+%                  L3 = L2+T23(1:3,4);
+%                  L4 = L3+T34(1:3,4);
+                 
+%                  X = [L0(1,1) L1(1,1) L2(1,1) L3(1,1) L4(1,1)];
+%                  Y = [L0(2,1) L1(2,1) L2(2,1) L3(2,1) L4(2,1)];
+%                  Z = [L0(3,1) L1(3,1) L2(3,1) L3(3,1) L4(3,1)];
+
+                 plot3(X, Y, Z, '-o','LineWidth',2,'MarkerSize',6,'MarkerFaceColor',[0.5,0.5,0.5]);grid on;
+                 xlabel('X Axis');
+                 ylabel('Y Axis');
+                 zlabel('Z Axis');
+                 axis([-200 200 -200 200 0 200]);
+            end
+            
+    
         
     end
 end
