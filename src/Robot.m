@@ -298,40 +298,49 @@ classdef Robot < handle
                                           0,                   0, 1,                      0;
                                           0,                   0, 0,                      1];
 
-%                 base=[0 T01(1,4) T12(1,4) T23(1,4) T34(1,4)];
-%                 L1=[0 T01(2,4) T12(2,4) T23(2,4) T34(2,4)];
-%                 L2=[0 T01(3,4) T12(3,4) T23(3,4) T34(3,4)];
-%                 L3 =[E1;E2;E3];
-%                 endpos = fk3001(q);
-
                  Point0 = [0; 0; 0; 1];
                  Point1 = T01*Point0;
-%                  disp(Point1)
                  Point2 = (T01*T12)*Point0; 
-%                  disp(Point2)
                  Point3 = (T01*T12*T23)*Point0;
-%                  disp(Point3);
                  Point4 = (T01*T12*T23*T34)*Point0;
-%                  disp(Point4)
                  
                  X = [Point0(1,1) Point1(1,1) Point2(1,1) Point3(1,1) Point4(1,1)];
                  Y = [Point0(2,1) Point1(2,1) Point2(2,1) Point3(2,1) Point4(2,1)];
                  Z = [Point0(3,1) Point1(3,1) Point2(3,1) Point3(3,1) Point4(3,1)];
-%                  L0 = [0; 0; 0];
-%                  L1 = L0+T01(1:3,4);
-%                  L2 = L1+T12(1:3,4);
-%                  L3 = L2+T23(1:3,4);
-%                  L4 = L3+T34(1:3,4);
-                 
-%                  X = [L0(1,1) L1(1,1) L2(1,1) L3(1,1) L4(1,1)];
-%                  Y = [L0(2,1) L1(2,1) L2(2,1) L3(2,1) L4(2,1)];
-%                  Z = [L0(3,1) L1(3,1) L2(3,1) L3(3,1) L4(3,1)];
+
 
                  plot3(X, Y, Z, '-o','LineWidth',2,'MarkerSize',6,'MarkerFaceColor',[0.5,0.5,0.5]);grid on;
                  xlabel('X Axis');
                  ylabel('Y Axis');
                  zlabel('Z Axis');
                  axis([-200 200 -200 200 0 200]);
+                   
+%                  Base frame (frame 0)
+                 line([X(1),X(1)+50],[Y(1),Y(1)],[Z(1),Z(1)], 'Color', 'r', 'LineWidth', 2);
+                 line([X(1),X(1)],[Y(1),Y(1)+50],[Z(1),Z(1)], 'Color', 'b', 'LineWidth', 2);
+                 line([X(1),X(1)],[Y(1),Y(1)],[Z(1),Z(1)+50], 'Color', 'g', 'LineWidth', 2);
+
+%                  Frame 1
+                 line([X(2),X(2)+50],[Y(2),Y(2)],[Z(2),Z(2)], 'Color', 'r', 'LineWidth', 2);
+                 line([X(2),X(2)],[Y(2),Y(2)+50],[Z(2),Z(2)], 'Color', 'b', 'LineWidth', 2);
+                 line([X(2),X(2)],[Y(2),Y(2)],[Z(2),Z(2)+50], 'Color', 'g', 'LineWidth', 2);
+                 
+%                   Frame 2
+                 line([X(3),X(3)+50],[Y(3),Y(3)],[Z(3),Z(3)], 'Color', 'r', 'LineWidth', 2);
+                 line([X(3),X(3)],[Y(3),Y(3)+50],[Z(3),Z(3)], 'Color', 'g', 'LineWidth', 2);
+                 line([X(3),X(3)],[Y(3),Y(3)],[Z(3),Z(3)+50], 'Color', 'b', 'LineWidth', 2);
+                 
+%                   Frame 3
+                 line([X(4),X(4)+50],[Y(4),Y(4)],[Z(4),Z(4)], 'Color', 'b', 'LineWidth', 2);
+                 line([X(4),X(4)],[Y(4),Y(4)+50],[Z(4),Z(4)], 'Color', 'g', 'LineWidth', 2);
+                 line([X(4),X(4)],[Y(4),Y(4)],[Z(4),Z(4)+50], 'Color', 'r', 'LineWidth', 2);
+                 
+%                   End effector frame (frame 4)
+                 line([X(5),X(5)+50],[Y(5),Y(5)],[Z(5),Z(5)], 'Color', 'r', 'LineWidth', 2);
+                 line([X(5),X(5)],[Y(5),Y(5)+50],[Z(5),Z(5)], 'Color', 'g', 'LineWidth', 2);
+                 line([X(5),X(5)],[Y(5),Y(5)],[Z(5),Z(5)+50], 'Color', 'b', 'LineWidth', 2);
+                 
+                 legend('arm','x-axis', 'y-axis', 'z-axis');
             end
             
     

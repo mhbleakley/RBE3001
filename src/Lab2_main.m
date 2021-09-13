@@ -50,10 +50,15 @@ try
 %     pp.plot_arm(angles);
 %     drawnow;
 
+% pp.interpolate_jp([10,45,-20], 6000); % Part 7 Pos1
+% pp.interpolate_jp([-35,40,20], 6000); % Part 7 Pos 2
+% pp.interpolate_jp([60,60,30], 6000); % Part 7 Pos 3
+% pp.interpolate_jp([13,13,13], 6000); % Part 7 Pos 4
+% pp.interpolate_jp([90,0,0], 6000); % Part 7 Pos 5
 
 tic
-while 1
-if mod(toc,2)
+while toc<8
+if mod(toc,1)
     angles = pp.measured_js(1,0);
     newAngles = angles(1,:)*2*pi/360;
     disp(newAngles)
