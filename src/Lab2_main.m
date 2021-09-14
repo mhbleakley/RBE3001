@@ -56,16 +56,126 @@ try
 % pp.interpolate_jp([13,13,13], 6000); % Part 7 Pos 4
 % pp.interpolate_jp([90,0,0], 6000); % Part 7 Pos 5
 
-tic
-while toc<8
-if mod(toc,1)
-    angles = pp.measured_js(1,0);
-    newAngles = angles(1,:)*2*pi/360;
-    disp(newAngles)
-    pp.plot_arm(transpose(newAngles)); drawnow
-end
-    
-end
+% tic
+% while toc<8
+% if mod(toc,1)
+%     angles = pp.measured_js(1,0);
+%     newAngles = angles(1,:)*2*pi/360;
+%     disp(newAngles)
+%     pp.plot_arm(transpose(newAngles)); drawnow
+% end
+%     
+% end
+
+
+% % Motion Planning Arm Movement
+% Pos1 = [0, 0, 0];
+% Pos2 = [0,30,0];
+% Pos3 = [0 55 30];
+% Pos4 = [0, 0, 0];
+% 
+% M = zeros(10000, 7)
+% 
+% t0 = clock;
+% ms = 0;
+% ms1 = 0;
+% x = 12000;
+% i = 1;
+% once = 1;
+% while ms <= x
+%     ms = etime(clock,t0) * 1000;
+%     
+%     if ms < 3000
+%         if(once)
+%             pp.interpolate_jp(Pos1, 3000);
+%             once = 0;
+%         end
+%     elseif ms > 3000 && ms < 6000
+%         if(once == 0)
+%             pp.interpolate_jp(Pos2, 3000);
+%             once = 1;
+%         end
+%         
+%     elseif ms > 6000 && ms < 9000
+%         if(once)
+%             pp.interpolate_jp(Pos3, 3000);
+%             once = 0;
+%         end
+%     elseif ms > 9000 && ms < 12000
+%         if(once == 0)
+%             pp.interpolate_jp(Pos4, 3000);
+%             once = 1;
+%         end
+%     end
+%         
+%     angle = pp.measured_js(1,0); 
+%     fkAngle = transpose(angle(1, :)) * 2 * pi/360;
+%     M(i, 1) = ms;
+%     M(i, 2) = angle(1,1);
+%     M(i, 3) = angle(1,2);
+%     M(i, 4) = angle(1,3);
+%     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+%     M(i,5) = endpoint(1,1);
+%     M(i,6) = endpoint(2,1);
+%     M(i,7) = endpoint(3,1);
+%     
+%     
+%     i = i + 1;
+% end
+% 
+% writematrix(M,'motion_planning.csv');
+
+filename = 'motion_planning.csv';
+motionData = csvread(filename);
+time = motionData(:,1);
+joint1 = motionData(:,2);
+joint2 = motionData(:,3);
+joint3 = motionData(:,4);
+
+subplot(3,2,1)
+plot(time, joint1);
+hold on
+plot(time, joint2);
+plot(time, joint3);
+hold off
+title("Joint Angles vs Time");
+xlabel('Time(ms)') ;
+ylabel('Angle(degrees)'); 
+legend('Joint1', 'Joint2', 'Joint3');
+
+subplot(3,2,2)
+endEffectorPosX = motionData(:, 5);
+endEffectorPosZ = motionData(:, 7);
+plot(time, endEffectorPosX);
+hold on
+plot(time, endEffectorPosZ);
+hold off
+title("End Effector position vs Time");
+xlabel('Time(ms)') ;
+ylabel('Position(mm)'); 
+legend('X Position', 'Z Position');
+
+subplot(3,2,3)
+xPos = motionData(:,5);
+yPos = motionData(:,6);
+zPos = motionData(:,7);
+plot(xPos, zPos);
+hold on
+plot(95,55,'r*');
+plot(100,195,'r*');
+plot(120,130,'r*');
+plot(135,130,'r*');
+hold off
+% plot(Pos1, '-o');
+title("X-Z plane trajectory");
+xlabel('X position(mm)') ;
+ylabel('Z position(mm)'); 
+
+subplot(3,2,4)
+plot(xPos, yPos);
+title("X-Y plane trajectory");
+xlabel('X position(mm)') ;
+ylabel('Y position(mm)'); 
 
 catch exception
     getReport(exception)
