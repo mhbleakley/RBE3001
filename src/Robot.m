@@ -357,7 +357,7 @@ classdef Robot < handle
             
             D1 = x/r;
             C1 = sqrt(1 - (D1^2));
-            theta1 = atan2(C1,D1);
+            theta1 = atan2(y,x);
             
             alpha = atan2(s,r);
             D2 = ((a1^2) + (r^2) + (s^2)- (a2^2))/(2*a1*(sqrt((r^2) + (s^2))));
@@ -378,7 +378,7 @@ classdef Robot < handle
             
             Q = [theta1, theta2, theta3]; 
             Q = Q * (360/(2*pi));
-            disp(Q * 360/(2*pi));
+%             disp(Q * 360/(2*pi));
             
             end
             
