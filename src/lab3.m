@@ -33,13 +33,14 @@ try
   % packet sizes up to 64 bytes.
   packet = zeros(15, 1, 'single');
   
-%   disp(pp.fk3001([0;0;0])) % 100 0 195
+%   disp(pp.fk3001([-90;0;0])) % 100 0 195
 %   disp(pp.fk3001([20;30;40])) % -14 -32 33
 %   disp(pp.fk3001([45;10;18])) % -79 -128 -15
 %   disp(pp.fk3001([35;30;30])) % 175 83 140
   
- 
-  checkpoint = pp.fk3001(pp.ik3001([100 0 195]));
+%   pos = pp.measured_js(1,0);
+%   disp(pos(1,:));
+  checkpoint = pp.fk3001(pp.ik3001([30 10 145]));
   disp(checkpoint);
 %   disp(pp.ik3001([100 0 195]));
 

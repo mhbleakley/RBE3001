@@ -237,6 +237,7 @@ classdef Robot < handle
         end
         
         function T= fk3001(self, q)
+            q = q*pi/180;
             T = [ cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(1))*cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(1))*cos(q(3) + pi/2)*sin(q(2) - pi/2), -sin(q(1)), 100*cos(q(1))*cos(q(2) - pi/2) + 100*cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - 100*cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
                  cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(2) - pi/2)*sin(q(1))*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(1))*sin(q(2) - pi/2),  cos(q(1)), 100*cos(q(2) - pi/2)*sin(q(1)) + 100*cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - 100*sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
                                        - cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(2) - pi/2),                           sin(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(2) - pi/2)*cos(q(3) + pi/2),            0,                                95 - 100*cos(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(3) + pi/2)*sin(q(2) - pi/2) - 100*sin(q(2) - pi/2);
@@ -344,45 +345,15 @@ classdef Robot < handle
             end
             
             function Q = ik3001(self, pos)
-%                 Q1 = atan2(pos(2), pos(1)); % joint 1 angle
-%                 
-%                 r = sqrt(pos(1)^2 + pos(2)^2); %100
-%                 d1 = 95;
-%                 s = pos(3) - d1; %100
-%                 
-%                 a1 = 100; % joint 1 length
-%                 a2 = 100; %sqrt(100^2 + (pos(3) - s)^2)
-%                 
-%                 D3 = -((a1^2 + a2^2 - (r^2 + s^2)))/(2 * a1 * a2);
-%                 C3 = sqrt(1 - D3^2);
-%                 Q3 = atan2(C3, D3); % joint 3 angle
-%                 
-%                 
-%                 alpha = atan2(s, r);
-%                 D2 = (a1^2 + r^2 + s^2 - a2^2)/(2*a1*sqrt(r^2 + s^2));
-%                 C2 = sqrt(1 - D2^2);
-%                 beta = atan2(C2, D2);
-%                 Q2 = (alpha - beta); % joint 2 angle
-%                 
-%              
-%                 if Q2 < -pi/2 && Q2 > pi/2
-%                     Q2 = alpha - atan2(-C2, D2); % safety checks for angles 2 and 3
-%                 end
-%                 if Q3 < -pi/2 && Q3 > pi/2
-%                     Q3 = atan2(-C3, D3) ;
-%                 end
-%                 Q2 = Q2 + pi/2
-%                 Q3 = Q3 - (pi/2);
-%                 Q = [Q1 Q2 Q3];
-%                 Q = Q * 360/(2*pi);
-                
+
             a1 = 100;
             a2 = 100; 
+            d1 = 95;
             x = pos(1);
             y = pos(2);
             z = pos(3);
             r = sqrt((x^2) + (y^2));
-            s = sqrt(((a1 + a2)^2) - (r^2));
+            s = z - d1;
             
             D1 = x/r;
             C1 = sqrt(1 - (D1^2));
@@ -390,22 +361,23 @@ classdef Robot < handle
             
             alpha = atan2(s,r);
             D2 = ((a1^2) + (r^2) + (s^2)- (a2^2))/(2*a1*(sqrt((r^2) + (s^2))));
-            C2 = sqrt(1 - (D2^2));
+            C2 = -(sqrt(1 - (D2^2)));
             beta = atan2(C2,D2);
-            theta2 = pi/2 - (alpha - beta); %- (pi/2);
+            theta2 = pi/2 - (alpha - beta);
             
             D3 = -((a1^2) + (a2^2) - ((r^2) + (s^2)))/(2*a1*a2);
             C3 = sqrt(1 - (D3^2));
-            theta3 =  -(atan2(C3,D3) + pi/2);
+            theta3 =  (atan2(C3,D3))- pi/2;
             
             if theta2 <= -pi/2 || theta2 >= pi/2
-                theta2 = (alpha - (atan2(-C2, D2))) - pi/2; % safety checks for angles 2 and 3
+                theta2 = pi/2 - (alpha - (atan2(-C2, D2))); % safety checks for angles 2 and 3
             end
             if theta3 <= -pi/2 || theta3 >= pi/2
-                theta3 = (atan2(-C3, D3) - pi/2);
+                theta3 = atan2(-C3, D3) - pi/2;
             end
             
             Q = [theta1, theta2, theta3]; 
+            Q = Q * (360/(2*pi));
             disp(Q * 360/(2*pi));
             
             end
