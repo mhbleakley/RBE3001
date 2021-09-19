@@ -237,6 +237,7 @@ classdef Robot < handle
         end
         
         function T= fk3001(self, q)
+            q = q*pi/180;
             T = [ cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(1))*cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(1))*cos(q(3) + pi/2)*sin(q(2) - pi/2), -sin(q(1)), 100*cos(q(1))*cos(q(2) - pi/2) + 100*cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - 100*cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
                  cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2), - cos(q(2) - pi/2)*sin(q(1))*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(1))*sin(q(2) - pi/2),  cos(q(1)), 100*cos(q(2) - pi/2)*sin(q(1)) + 100*cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - 100*sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
                                        - cos(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(3) + pi/2)*sin(q(2) - pi/2),                           sin(q(2) - pi/2)*sin(q(3) + pi/2) - cos(q(2) - pi/2)*cos(q(3) + pi/2),            0,                                95 - 100*cos(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(3) + pi/2)*sin(q(2) - pi/2) - 100*sin(q(2) - pi/2);
@@ -343,7 +344,44 @@ classdef Robot < handle
                  legend('arm','x-axis', 'y-axis', 'z-axis');
             end
             
-    
+            function Q = ik3001(self, pos)
+
+            a1 = 100;
+            a2 = 100; 
+            d1 = 95;
+            x = pos(1);
+            y = pos(2);
+            z = pos(3);
+            r = sqrt((x^2) + (y^2));
+            s = z - d1;
+            
+            D1 = x/r;
+            C1 = sqrt(1 - (D1^2));
+            theta1 = atan2(C1,D1);
+            
+            alpha = atan2(s,r);
+            D2 = ((a1^2) + (r^2) + (s^2)- (a2^2))/(2*a1*(sqrt((r^2) + (s^2))));
+            C2 = -(sqrt(1 - (D2^2)));
+            beta = atan2(C2,D2);
+            theta2 = pi/2 - (alpha - beta);
+            
+            D3 = -((a1^2) + (a2^2) - ((r^2) + (s^2)))/(2*a1*a2);
+            C3 = sqrt(1 - (D3^2));
+            theta3 =  (atan2(C3,D3))- pi/2;
+            
+            if theta2 <= -pi/2 || theta2 >= pi/2
+                theta2 = pi/2 - (alpha - (atan2(-C2, D2))); % safety checks for angles 2 and 3
+            end
+            if theta3 <= -pi/2 || theta3 >= pi/2
+                theta3 = atan2(-C3, D3) - pi/2;
+            end
+            
+            Q = [theta1, theta2, theta3]; 
+            Q = Q * (360/(2*pi));
+            disp(Q * 360/(2*pi));
+            
+            end
+            
         
     end
 end
