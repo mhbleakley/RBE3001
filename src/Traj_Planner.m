@@ -37,38 +37,35 @@ classdef Traj_Planner
             a = M\givenVals;
          end
          
-         function a = linear_trajectory(self, ti, tf, posi, posf)
-            M = [1 ti;
-                1 tf];
-            
-            givenVals = [posi; posf];
-            
-            a = M\givenVals;
-        end
-         
+%          function a = linear_trajectory(self, ti, tf, posi, posf)
+%             M = [1 ti;
+%                 1 tf];
+%             
+%             givenVals = [posi; posf];
+%             
+%             a = M\givenVals;
+%         end
+%          
         
        function a = linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
            i = 1;
            steps = 1000*(tf-ti)/timestep;
-%            traj = self.cubic_traj(ti, tf, 0, 0, posi, posf);
-           lin_traj(1:2, 1) = self.linear_trajectory(ti, tf, posi, posf);
-           lin_traj(3:4, 1) = 0;
-%            disp(lin_traj);
+           traj = self.cubic_traj(ti, tf, 0, 0, posi, posf);
            while (i <= steps)
-               a(i) = self.cubic_polynomial(lin_traj,  ti + ((i*timestep)/1000));
+               a(i) = self.cubic_polynomial(traj,  ti + ((i*timestep)/1000));
                i = i+1;
            end
        end
-   
-%       function a = quintic_linear_traj(self,posi, posf, ti, tf, ai, af, timestep) %ti/f = s, timestep = ms
-%            i = 1;
-%            steps = 1000*(tf-ti)/timestep;
-%            traj = self.quintic_traj(ti, tf, 0, 0, posi, posf );
-%            while (i <= steps) %abs(current_pos) >= abs(posf)-2 && abs(current_pos) <= abs(posf)+2
-%                a(i) = self.cubic_polynomial(traj,  ti + ((i*timestep)/1000));
-%                i = i+1;
-%            end
-%        end
+       
+      function a = quintic_linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
+           i = 1;
+           steps = 1000*(tf-ti)/timestep;
+           traj = self.quintic_traj(posi, posf, ti, tf, 0, 0, 0, 0);
+           while (i <= steps)
+               a(i) = self.quintic_polynomial(traj,  ti + ((i*timestep)/1000));
+               i = i+1;
+           end
+        end
         
         function C = cubic_polynomial(self, a, t)
             C = a(1,1) + t * a(2,1) + (t^2) * a(3,1) + (t^3) * a(4,1);

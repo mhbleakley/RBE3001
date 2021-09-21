@@ -164,215 +164,214 @@ try
 % ylabel('Angle(degrees)'); 
 % legend('Joint1', 'Joint2', 'Joint3');
 
-%    Point1 = [35,55,75];
-%    Point2 = [100 0 195];
-%    Point3 = [-70 -60 90];
+   Point1 = [50,55,75];
+   Point2 = [50 0 35];
+   Point3 = [140 60 90];
    
-   Pos1 = [50,55,75];
-   Pos2 = [50, 0, 35];
-   Pos3 = [140, 60, 90];
+%    Pos1 = [50,55,75];
+%    Pos2 = [50, 0, 35];
+%    Pos3 = [140, 60, 90];
    
-%    Pos1 = pp.ik3001(Point1);
-%    Pos2 = pp.ik3001(Point2);
-%    Pos3 = pp.ik3001(Point3);
+   Pos1 = pp.ik3001(Point1);
+   Pos2 = pp.ik3001(Point2);
+   Pos3 = pp.ik3001(Point3);
 
    positionArray = [Pos1, Pos2, Pos3, Pos1];
   
 
 % Cubic Trajectory 
 
-pp.interpolate_jp(pp.ik3001(Pos1), 2000); % Go to starting Position
+pp.interpolate_jp(Pos1, 2000); % Go to starting Position
 pause(2.2);
-% joint1Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,1), Pos2(1,1));
-% joint2Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,2), Pos2(1,2));
-% joint3Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,3), Pos2(1,3));
-% 
-% joint1Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,1), Pos3(1,1));
-% joint2Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,2), Pos3(1,2));
-% joint3Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,3), Pos3(1,3));
-% 
-% joint1Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,1), Pos1(1,1));
-% joint2Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,2), Pos1(1,2));
-% joint3Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,3), Pos1(1,3));
-% 
-% i = 1; % counts iterations
-% tic
-% while toc < 4
-%     
-%     if toc >= 0 && toc <= 1
-%         Point(1,1) = traj.cubic_polynomial(joint1Pos12, toc);
-%         Point(1,2) = traj.cubic_polynomial(joint2Pos12, toc);
-%         Point(1,3) = traj.cubic_polynomial(joint3Pos12, toc);
-%     
-%     elseif toc > 1 && toc <=2
-%        Point(1,1) = traj.cubic_polynomial(joint1Pos23, toc);
-%        Point(1,2) = traj.cubic_polynomial(joint2Pos23, toc);
-%        Point(1,3) = traj.cubic_polynomial(joint3Pos23, toc);
-%     
-%     elseif toc > 2 && toc <= 3
-%         Point(1,1) = traj.cubic_polynomial(joint1Pos31, toc);
-%         Point(1,2) = traj.cubic_polynomial(joint2Pos31, toc);
-%         Point(1,3) = traj.cubic_polynomial(joint3Pos31, toc);
-%     else
-%         Point = Pos1;
-%     end
-%         
-%     pp.interpolate_jp(Point, 100);
-%     
-%     angle = pp.measured_js(1,0); 
-%     fkAngle = transpose(angle(1, :));
-%     traj_m(i, 1) = toc;
-%     traj_m(i, 2) = angle(1,1);
-%     traj_m(i, 3) = angle(1,2);
-%     traj_m(i, 4) = angle(1,3);
-%     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
-%     traj_m(i,5) = endpoint(1,1);
-%     traj_m(i,6) = endpoint(2,1);
-%     traj_m(i,7) = endpoint(3,1);
-%     i = i+1;
-% end
+joint1Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,1), Pos2(1,1));
+joint2Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,2), Pos2(1,2));
+joint3Pos12 = traj.cubic_traj(0,1,0,0,Pos1(1,3), Pos2(1,3));
 
-% Linear Trajectory 
+joint1Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,1), Pos3(1,1));
+joint2Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,2), Pos3(1,2));
+joint3Pos23 = traj.cubic_traj(1,2,0,0,Pos2(1,3), Pos3(1,3));
+
+joint1Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,1), Pos1(1,1));
+joint2Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,2), Pos1(1,2));
+joint3Pos31 = traj.cubic_traj(2,3,0,0,Pos3(1,3), Pos1(1,3));
 
 i = 1; % counts iterations
-timestep = 100;
-x12traj = traj.linear_traj(Pos1(1,1), Pos2(1,1), 0, 1, timestep);
-x23traj = traj.linear_traj(Pos2(1,1), Pos3(1,1), 1, 2, timestep);
-x31traj = traj.linear_traj(Pos3(1,1), Pos1(1,1), 2, 3, timestep);
-
-y12traj = traj.linear_traj(Pos1(1,2), Pos2(1,2), 0, 1, timestep);
-y23traj = traj.linear_traj(Pos2(1,2), Pos3(1,2), 1, 2, timestep);
-y31traj = traj.linear_traj(Pos3(1,2), Pos1(1,2), 2, 3, timestep);
-
-z12traj = traj.linear_traj(Pos1(1,3), Pos2(1,3), 0, 1, timestep);
-z23traj = traj.linear_traj(Pos2(1,3), Pos3(1,3), 1, 2, timestep);
-z31traj = traj.linear_traj(Pos3(1,3), Pos1(1,3), 2, 3, timestep);
-
-% disp("1 to 2")
-% disp(x12traj);
-% disp(y12traj);
-% disp(z12traj);
-% 
-% disp("2 to 3")
-% disp(x23traj);
-% disp(y23traj);
-% disp(z23traj);
-% 
-% disp("3 to 1")
-% disp(x23traj);
-% disp(y23traj);
-% disp(z23traj);
-
-timecount = 1;
-timecount2 = 1;
-timecount3 = 1;
 tic
-while toc < 3
+while toc < 4
     
     if toc >= 0 && toc <= 1
-        
-      if (timecount <= 10)
-          pp.interpolate_jp(pp.ik3001([x12traj(timecount), y12traj(timecount), z12traj(timecount)]), 0);
-          timecount = timecount + 1;
-      end
-      
+        Point(1,1) = traj.cubic_polynomial(joint1Pos12, toc);
+        Point(1,2) = traj.cubic_polynomial(joint2Pos12, toc);
+        Point(1,3) = traj.cubic_polynomial(joint3Pos12, toc);
+    
     elseif toc > 1 && toc <=2
-
-        
-        if (timecount2 <= 10)
-          pp.interpolate_jp(pp.ik3001([x23traj(timecount2), y23traj(timecount2), z23traj(timecount2)]), 0);
-          timecount2 = timecount2 + 1;
-        end
-            
+       Point(1,1) = traj.cubic_polynomial(joint1Pos23, toc);
+       Point(1,2) = traj.cubic_polynomial(joint2Pos23, toc);
+       Point(1,3) = traj.cubic_polynomial(joint3Pos23, toc);
+    
     elseif toc > 2 && toc <= 3
-
-        if (timecount3 <= 10)
-          pp.interpolate_jp(pp.ik3001([x31traj(timecount3), y31traj(timecount3), z31traj(timecount3)]), 0);
-          timecount3 = timecount3 + 1;
-        end
-
+        Point(1,1) = traj.cubic_polynomial(joint1Pos31, toc);
+        Point(1,2) = traj.cubic_polynomial(joint2Pos31, toc);
+        Point(1,3) = traj.cubic_polynomial(joint3Pos31, toc);
+    else
+        Point = Pos1;
     end
+        
+    pp.interpolate_jp(Point, 100);
     
     angle = pp.measured_js(1,0); 
     fkAngle = transpose(angle(1, :));
-    lin_traj_m(i, 1) = toc;
-    lin_traj_m(i, 2) = angle(1,1);
-    lin_traj_m(i, 3) = angle(1,2);
-    lin_traj_m(i, 4) = angle(1,3);
+    traj_m(i, 1) = toc;               
+
+    traj_m(i, 2) = angle(1,1);
+    traj_m(i, 3) = angle(1,2);
+    traj_m(i, 4) = angle(1,3);
     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
-    lin_traj_m(i,5) = endpoint(1,1);
-    lin_traj_m(i,6) = endpoint(2,1);
-    lin_traj_m(i,7) = endpoint(3,1);
+    traj_m(i,5) = endpoint(1,1);
+    traj_m(i,6) = endpoint(2,1);
+    traj_m(i,7) = endpoint(3,1);
     i = i+1;
 end
 
-
-% Quintic Trajectory 
-
-% x12traj = traj.quintic_traj(Pos1(1,1), Pos2(1,1), 0, 1, 0, 0, 0, 0);
-% x23traj = traj.quintic_traj(Pos2(1,1), Pos3(1,1), 1, 2, 0, 0, 0, 0);
-% x31traj = traj.quintic_traj(Pos3(1,1), Pos1(1,1), 2, 3, 0, 0, 0, 0);
-% 
-% y12traj = traj.quintic_traj(Pos1(1,2), Pos2(1,2), 0, 1, 0, 0, 0, 0);
-% y23traj = traj.quintic_traj(Pos2(1,2), Pos3(1,2), 1, 2, 0, 0, 0, 0);
-% y31traj = traj.quintic_traj(Pos3(1,2), Pos1(1,2), 2, 3, 0, 0, 0, 0);
-% 
-% z12traj = traj.quintic_traj(Pos1(1,3), Pos2(1,3), 0, 1, 0, 0, 0, 0);
-% z23traj = traj.quintic_traj(Pos2(1,3), Pos3(1,3), 1, 2, 0, 0, 0, 0);
-% z31traj = traj.quintic_traj(Pos3(1,3), Pos1(1,3), 2, 3, 0, 0, 0, 0);
+% Linear Trajectory 
 % 
 % i = 1; % counts iterations
-% tic
-% while toc < 3
-%     
-%     if toc >= 0 && toc <= 1
-%         Point(1,1) = traj.quintic_polynomial(x12traj, toc);
-%         Point(1,2) = traj.quintic_polynomial(y12traj, toc);
-%         Point(1,3) = traj.quintic_polynomial(z12traj, toc);
-%     
-%     elseif toc > 1 && toc <=2
-%         Point(1,1) = traj.quintic_polynomial(x23traj, toc);
-%         Point(1,2) = traj.quintic_polynomial(y23traj, toc);
-%         Point(1,3) = traj.quintic_polynomial(z23traj, toc);
-%     
-%     elseif toc > 2 && toc <= 3
-%         Point(1,1) = traj.quintic_polynomial(x31traj, toc);
-%         Point(1,2) = traj.quintic_polynomial(y31traj, toc);
-%         Point(1,3) = traj.quintic_polynomial(z31traj, toc);
+% timestep = 1;
+% x12traj = traj.linear_traj(Pos1(1,1), Pos2(1,1), 0, 1, timestep);
+% x23traj = traj.linear_traj(Pos2(1,1), Pos3(1,1), 1, 2, timestep);
+% x31traj = traj.linear_traj(Pos3(1,1), Pos1(1,1), 2, 3, timestep);
 % 
-%     else
-%         Point = Pos1;
+% y12traj = traj.linear_traj(Pos1(1,2), Pos2(1,2), 0, 1, timestep);
+% y23traj = traj.linear_traj(Pos2(1,2), Pos3(1,2), 1, 2, timestep);
+% y31traj = traj.linear_traj(Pos3(1,2), Pos1(1,2), 2, 3, timestep);
+% 
+% z12traj = traj.linear_traj(Pos1(1,3), Pos2(1,3), 0, 1, timestep);
+% z23traj = traj.linear_traj(Pos2(1,3), Pos3(1,3), 1, 2, timestep);
+% z31traj = traj.linear_traj(Pos3(1,3), Pos1(1,3), 2, 3, timestep);
+% 
+% 
+% timecount = 1;
+% timecount2 = 1;
+% timecount3 = 1;
+% prevEndpoint = [-500; -500; -500; -500]; %initialize variable to impossible values so it never overlaps
+% zeroVector = [0; 0; 0];
+% angle = pp.measured_js(1,0); 
+% fkAngle = transpose(angle(1, :));
+% endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+% tic
+% while toc < 3.2
+%     
+%     if ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos2)) && (timecount <= 1000)
+%       
+%           pp.interpolate_jp(pp.ik3001([x12traj(timecount), y12traj(timecount), z12traj(timecount)]), 0);
+%           timecount = timecount + 1;
+%       
+%     elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos3)) && (timecount2 <= 1000)
+% 
+%           pp.interpolate_jp(pp.ik3001([x23traj(timecount2), y23traj(timecount2), z23traj(timecount2)]), 0);
+%           timecount2 = timecount2 + 1;
+%             
+%     elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos1)) && (timecount3 <= 1000)
+%       
+%           pp.interpolate_jp(pp.ik3001([x31traj(timecount3), y31traj(timecount3), z31traj(timecount3)]), 0);
+%           timecount3 = timecount3 + 1;
+% 
 %     end
-%         
-%     pp.interpolate_jp(pp.ik3001(Point), 100);
 %     
 %     angle = pp.measured_js(1,0); 
 %     fkAngle = transpose(angle(1, :));
-%     quintic_traj_m(i, 1) = toc;
-%     quintic_traj_m(i, 2) = angle(1,1);
-%     quintic_traj_m(i, 3) = angle(1,2);
-%     quintic_traj_m(i, 4) = angle(1,3);
 %     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
-%     quintic_traj_m(i,5) = endpoint(1,1);
-%     quintic_traj_m(i,6) = endpoint(2,1);
-%     quintic_traj_m(i,7) = endpoint(3,1);
-%     i = i+1;
+%     %if filters identical data and zero data out to remove noise
+%     if(prevEndpoint(1,1) ~= endpoint(1,1) || prevEndpoint(2,1) ~= endpoint(2,1) || prevEndpoint(3,1) ~= endpoint(3,1) && 0 ~= endpoint(1,1) && 0 ~= endpoint(2,1) && 0 ~= endpoint(3,1))
+%         lin_traj_m(i, 1) = toc;
+%         lin_traj_m(i, 2) = angle(1,1);
+%         lin_traj_m(i, 3) = angle(1,2);
+%         lin_traj_m(i, 4) = angle(1,3);
+% 
+%         lin_traj_m(i,5) = endpoint(1,1);
+%         lin_traj_m(i,6) = endpoint(2,1);
+%         lin_traj_m(i,7) = endpoint(3,1);
+%         i = i+1;
+%     end
+%     prevEndpoint = endpoint;
 % end
 
+
+% Quintic Trajectory
+
+% i = 1; % counts iterations
+% timestep = 1;
+% x12traj = traj.quintic_linear_traj(Pos1(1,1), Pos2(1,1), 0, 1, timestep);
+% x23traj = traj.quintic_linear_traj(Pos2(1,1), Pos3(1,1), 1, 2, timestep);
+% x31traj = traj.quintic_linear_traj(Pos3(1,1), Pos1(1,1), 2, 3, timestep);
+% 
+% y12traj = traj.quintic_linear_traj(Pos1(1,2), Pos2(1,2), 0, 1, timestep);
+% y23traj = traj.quintic_linear_traj(Pos2(1,2), Pos3(1,2), 1, 2, timestep);
+% y31traj = traj.quintic_linear_traj(Pos3(1,2), Pos1(1,2), 2, 3, timestep);
+% 
+% z12traj = traj.quintic_linear_traj(Pos1(1,3), Pos2(1,3), 0, 1, timestep);
+% z23traj = traj.quintic_linear_traj(Pos2(1,3), Pos3(1,3), 1, 2, timestep);
+% z31traj = traj.quintic_linear_traj(Pos3(1,3), Pos1(1,3), 2, 3, timestep);
+% 
+% timecount = 1;
+% timecount2 = 1;
+% timecount3 = 1;
+% prevEndpoint = [-500; -500; -500; -500]; %initialize variable to impossible values so it never overlaps
+% zeroVector = [0; 0; 0];
+% angle = pp.measured_js(1,0); 
+% fkAngle = transpose(angle(1, :));
+% endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+% tic
+% while toc < 3.2
+%     
+%     if ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos2)) && (timecount <= 1000)
+%       
+%           pp.interpolate_jp(pp.ik3001([x12traj(timecount), y12traj(timecount), z12traj(timecount)]), 0);
+%           timecount = timecount + 1;
+%       
+%     elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos3)) && (timecount2 <= 1000)
+% 
+%           pp.interpolate_jp(pp.ik3001([x23traj(timecount2), y23traj(timecount2), z23traj(timecount2)]), 0);
+%           timecount2 = timecount2 + 1;
+%             
+%     elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos1)) && (timecount3 <= 1000)
+%       
+%           pp.interpolate_jp(pp.ik3001([x31traj(timecount3), y31traj(timecount3), z31traj(timecount3)]), 0);
+%           timecount3 = timecount3 + 1;
+% 
+%     end
+%     
+%     angle = pp.measured_js(1,0); 
+%     fkAngle = transpose(angle(1, :));
+%     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+%     %if filters identical data and zero data out to remove noise
+%     if(prevEndpoint(1,1) ~= endpoint(1,1) || prevEndpoint(2,1) ~= endpoint(2,1) || prevEndpoint(3,1) ~= endpoint(3,1) && 0 ~= endpoint(1,1) && 0 ~= endpoint(2,1) && 0 ~= endpoint(3,1))
+%         quintic_traj_m(i, 1) = toc;
+%         quintic_traj_m(i, 2) = angle(1,1);
+%         quintic_traj_m(i, 3) = angle(1,2);
+%         quintic_traj_m(i, 4) = angle(1,3);
+% 
+%         quintic_traj_m(i,5) = endpoint(1,1);
+%         quintic_traj_m(i,6) = endpoint(2,1);
+%         quintic_traj_m(i,7) = endpoint(3,1);
+%         i = i+1;
+%     end
+%     prevEndpoint = endpoint;
+% end
 
 
 % Plotting Traj Data
 
-% writematrix(traj_m,'trajectory_data.csv');
-% filename = 'trajectory_data.csv';
+writematrix(traj_m,'trajectory_data.csv');
+filename = 'trajectory_data.csv';
 
-writematrix(lin_traj_m,'linear_trajectory_data.csv');
-filename2 = 'linear_trajectory_data.csv';
+% writematrix(lin_traj_m,'linear_trajectory_data.csv');
+% filename2 = 'linear_trajectory_data.csv';
 
 % writematrix(quintic_traj_m,'quintic_trajectory_data.csv');
 % filename3 = 'quintic_trajectory_data.csv';
 
-traj_data = csvread(filename2);
+traj_data = csvread(filename);
 time = traj_data(:,1);
 
 % Position
@@ -381,14 +380,14 @@ yPos = traj_data(:,6);
 zPos = traj_data(:,7);
 
 % Velocity
-dx1=gradient(xPos(:))./gradient(time(:))
-dy1=gradient(yPos(:))./gradient(time(:))
-dz1=gradient(zPos(:))./gradient(time(:))
+dx1=gradient(xPos(:))./gradient(time(:));
+dy1=gradient(yPos(:))./gradient(time(:));
+dz1=gradient(zPos(:))./gradient(time(:));
 
 % Acceleration
-dx2=gradient(dx1(:))./gradient(time(:))
-dy2=gradient(dy1(:))./gradient(time(:))
-dz2=gradient(dz1(:))./gradient(time(:))
+dx2=gradient(dx1(:))./gradient(time(:));
+dy2=gradient(dy1(:))./gradient(time(:));
+dz2=gradient(dz1(:))./gradient(time(:));
 
 % Plot position 
 
