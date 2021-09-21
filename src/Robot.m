@@ -378,8 +378,30 @@ classdef Robot < handle
             
             Q = [theta1, theta2, theta3]; 
             Q = Q * (360/(2*pi));
-%             disp(Q * 360/(2*pi));
+            disp(Q);
             
+            end
+            
+            function B = finished_movement(self,currPos, targetPos)
+                
+%                 currentPV = self.measured_js(1,0);
+                currentPos = currPos;
+                
+                if(abs(currentPos(1,1)) >= abs(targetPos(1,1))-2 && abs(currentPos(1,2)) >= abs(targetPos(1,2))-2 && abs(currentPos(1,3)) >= abs(targetPos(1,3))-2)
+                    B1 = 1;
+                else 
+                    B1 = 0;
+                end
+                
+                if(abs(currentPos(1,1)) <= abs(targetPos(1,1)) + 2 && abs(currentPos(1,2))+2 <= abs(targetPos(1,2)) + 2 && abs(currentPos(1,3)) <= abs(targetPos(1,3))+2)
+                    B2 = 1;
+                else 
+                    B2 = 0;
+                end
+                
+                B = B1*B2;
+                
+                
             end
             
         
