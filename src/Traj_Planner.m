@@ -65,7 +65,19 @@ classdef Traj_Planner
                a(i) = self.quintic_polynomial(traj,  ti + ((i*timestep)/1000));
                i = i+1;
            end
-        end
+      end
+        
+      
+            function a = interpolated_quintic_linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
+           i = 1;
+           intTime = (tf - ti)*1000;
+           steps = intTime*(tf-ti)/timestep;
+           traj = self.quintic_traj(posi, posf, ti, tf, 0, 0, 0, 0);
+           while (i <= steps)
+               a(i) = self.quintic_polynomial(traj,  ti + ((i*timestep)/1000));
+               i = i+1;
+           end
+      end
         
         function C = cubic_polynomial(self, a, t)
             C = a(1,1) + t * a(2,1) + (t^2) * a(3,1) + (t^3) * a(4,1);

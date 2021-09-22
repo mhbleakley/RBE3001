@@ -40,9 +40,9 @@ try
 %   disp(pp.fk3001([35;30;30])) % 175 83 140
   
 %   viaPts = [0,0,0];
-%   Point1 = [35,55,75];
-%   Point2 = [100 0 195];
-%   Point3 = [-70 -60 90];
+%    Point1 = [50,55,75];
+%    Point2 = [50 0 35];
+%    Point3 = [140 60 90];
 %   
 % %   pp.interpolate_jp(pp.ik3001(Point1), 2000);
 %   pp.plot_arm(pp.ik3001(Point1))
@@ -362,14 +362,17 @@ end
 
 % Plotting Traj Data
 
-writematrix(traj_m,'trajectory_data.csv');
-filename = 'trajectory_data.csv';
+% writematrix(traj_m,'trajectory_data.csv');
+% filename = 'trajectory_data.csv';
 
 % writematrix(lin_traj_m,'linear_trajectory_data.csv');
 % filename2 = 'linear_trajectory_data.csv';
 
 % writematrix(quintic_traj_m,'quintic_trajectory_data.csv');
 % filename3 = 'quintic_trajectory_data.csv';
+
+% % writematrix(quintic_traj_m,'quintic_trajectory_data.csv');
+% % filename3 = 'quintic_trajectory_data.csv';
 
 traj_data = csvread(filename);
 time = traj_data(:,1);
