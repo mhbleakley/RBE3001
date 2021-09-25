@@ -34,7 +34,8 @@ try
   % packet sizes up to 64 bytes.
   packet = zeros(15, 1, 'single');
   
-  pp.dh2fk([0])
+  J = pp.jacob3001([0 90 -90]);
+  disp(det(J(1:3,:)));
   
   
   %CODE GOES HERE
