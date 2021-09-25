@@ -38,8 +38,77 @@ try
   disp(det(J(1:3,:)));
   
   
-  %CODE GOES HERE
+   Pos1 = [50,55,75];
+   Pos2 = [50 0 35];
+   Pos3 = [140 60 90];
   
+% Linear Trajectory 
+
+i = 1; % counts iterations
+timestep = 1;
+x12traj = traj.linear_traj(Pos1(1,1), Pos2(1,1), 0, 1, timestep);
+x23traj = traj.linear_traj(Pos2(1,1), Pos3(1,1), 1, 2, timestep);
+x31traj = traj.linear_traj(Pos3(1,1), Pos1(1,1), 2, 3, timestep);
+
+y12traj = traj.linear_traj(Pos1(1,2), Pos2(1,2), 0, 1, timestep);
+y23traj = traj.linear_traj(Pos2(1,2), Pos3(1,2), 1, 2, timestep);
+y31traj = traj.linear_traj(Pos3(1,2), Pos1(1,2), 2, 3, timestep);
+
+z12traj = traj.linear_traj(Pos1(1,3), Pos2(1,3), 0, 1, timestep);
+z23traj = traj.linear_traj(Pos2(1,3), Pos3(1,3), 1, 2, timestep);
+z31traj = traj.linear_traj(Pos3(1,3), Pos1(1,3), 2, 3, timestep);
+
+
+timecount = 1;
+timecount2 = 1;
+timecount3 = 1;
+prevEndpoint = [-500; -500; -500; -500]; %initialize variable to impossible values so it never overlaps
+zeroVector = [0; 0; 0];
+AV = pp.measured_js(1,1); 
+fkAngle = transpose(AV(1, :));
+qVelocity = AV(2,:);
+endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+tic
+while toc < 6
+    
+    if ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos2)) && (timecount <= 1000)
+      
+          pp.interpolate_jp(pp.ik3001([x12traj(timecount), y12traj(timecount), z12traj(timecount)]), 0);
+          timecount = timecount + 1;
+      
+    elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos3)) && (timecount2 <= 1000)
+
+          pp.interpolate_jp(pp.ik3001([x23traj(timecount2), y23traj(timecount2), z23traj(timecount2)]), 0);
+          timecount2 = timecount2 + 1;
+            
+    elseif ~(pp.finished_movement(transpose(endpoint(1:3,1)), Pos1)) && (timecount3 <= 1000)
+      
+          pp.interpolate_jp(pp.ik3001([x31traj(timecount3), y31traj(timecount3), z31traj(timecount3)]), 0);
+          timecount3 = timecount3 + 1;
+
+    end
+    
+    AV = pp.measured_js(1,1); 
+    fkAngle = transpose(AV(1, :));
+    qVelocity = AV(2,:);
+    endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+    %if filters identical data and zero data out to remove noise
+    if(prevEndpoint(1,1) ~= endpoint(1,1) || prevEndpoint(2,1) ~= endpoint(2,1) || prevEndpoint(3,1) ~= endpoint(3,1) && 0 ~= endpoint(1,1) && 0 ~= endpoint(2,1) && 0 ~= endpoint(3,1))
+        lin_traj_m(i, 1) = toc;
+        lin_traj_m(i, 2) = AV(1,1);
+        lin_traj_m(i, 3) = AV(1,2);
+        lin_traj_m(i, 4) = AV(1,3);
+
+        lin_traj_m(i,5) = endpoint(1,1);
+        lin_traj_m(i,6) = endpoint(2,1);
+        lin_traj_m(i,7) = endpoint(3,1);
+        i = i+1;
+    end
+    prevEndpoint = endpoint;
+%     pp.plot_arm(fkAngle);
+%     drawnow;
+end
+
   
   catch exception
     getReport(exception)

@@ -439,6 +439,8 @@ classdef Robot < handle
                 disp(J);
             end
             
-        
+            function PD = fdk3001(q, qd)
+                PD = self.jacob3001(q)*qd;
+            end
     end
 end
