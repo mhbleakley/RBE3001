@@ -228,7 +228,7 @@ classdef Robot < handle
             for j = [1:b]
                 %disp(T);
                 T = T * M{j};
-                %disp(T);
+                disp(T);
                  
             end
 
@@ -402,6 +402,41 @@ classdef Robot < handle
                 B = B1*B2;
                 
                 
+            end
+            
+            function J = jacob3001(self, q)
+                q = q*pi/180;
+                J11 = 100*sin(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(2) - pi/2)*cos(q(3) + pi/2)*sin(q(1)) - 100*cos(q(2) - pi/2)*sin(q(1));
+                J21 = 100*cos(q(1))*cos(q(2) - pi/2) + 100*cos(q(1))*cos(q(2) - pi/2)*cos(q(3) + pi/2) - 100*cos(q(1))*sin(q(2) - pi/2)*sin(q(3) + pi/2);
+                J31 = 0;
+                
+                J12 = - 100*cos(q(1))*sin(q(2) - pi/2) - 100*cos(q(1))*cos(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(1))*cos(q(3) + pi/2)*sin(q(2) - pi/2);
+                J22 = - 100*sin(q(1))*sin(q(2) - pi/2) - 100*cos(q(2) - pi/2)*sin(q(1))*sin(q(3) + pi/2) - 100*cos(q(3) + pi/2)*sin(q(1))*sin(q(2) - pi/2);
+                J32 = 100*sin(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(2) - pi/2)*cos(q(3) + pi/2) - 100*cos(q(2) - pi/2);
+                
+                J13 = - 100*cos(q(1))*cos(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(1))*cos(q(3) + pi/2)*sin(q(2) - pi/2);
+                J23 = - 100*cos(q(2) - pi/2)*sin(q(1))*sin(q(3) + pi/2) - 100*cos(q(3) + pi/2)*sin(q(1))*sin(q(2) - pi/2);
+                J33 = 100*sin(q(2) - pi/2)*sin(q(3) + pi/2) - 100*cos(q(2) - pi/2)*cos(q(3) + pi/2);
+                
+                J41 = 0;
+                J51 = 0;
+                J61 = 1;
+                
+                J42 = -sin(q(1));
+                J52 = cos(q(1));
+                J62 = 0;
+                
+                J43 = -sin(q(1));
+                J53 = cos(q(1));
+                J63 = 0;
+                
+                J = [J11 J12 J13;
+                    J21 J22 J23;
+                    J31 J32 J33;
+                    J41 J42 J43;
+                    J51 J52 J53;
+                    J61 J62 J63;];
+                disp(J);
             end
             
         

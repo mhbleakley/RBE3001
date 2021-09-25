@@ -51,16 +51,16 @@ try
 %     drawnow;
 
 
-tic
-while 1
-if mod(toc,2)
-    angles = pp.measured_js(1,0);
-    newAngles = angles(1,:)*2*pi/360;
-    disp(newAngles)
-    pp.plot_arm(transpose(newAngles)); drawnow
-end
+% tic
+% while 1
+% if mod(toc,2)
+%     angles = pp.measured_js(1,0);
+%     newAngles = angles(1,:)*2*pi/360;
+%     disp(newAngles)
+%     pp.plot_arm(transpose(newAngles)); drawnow
+% end
     
-end
+% end
 
 % pp.servo_jp([-30, 0, 0]);
 % tic
@@ -75,8 +75,8 @@ end
 % end
 
 % pp.dh2mat([pi 5 5 pi])
-% syms theta1 theta2 theta3 theta4 d a
-% pp.dh2fk([[0 55 0 0; theta1 40 0 -pi/2; (theta2 -pi/2) 0 100 0; (theta3+pi/2) 0 100 0]]);
+syms theta1 theta2 theta3 theta4 d a
+pp.dh2fk([[0 55 0 0; theta1 40 0 -pi/2; (theta2 -pi/2) 0 100 0; (theta3+pi/2) 0 100 0]]);
 % pp.fk3001([0 0 0]);
 % pp.servo_jp([-60 0 0]);
 % pp.plot_arm([-60 0 0]);
