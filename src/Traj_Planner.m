@@ -46,39 +46,6 @@ classdef Traj_Planner
 %             a = M\givenVals;
 %         end
 %          
-        
-       function a = linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
-           i = 1;
-           steps = 1000*(tf-ti)/timestep;
-           traj = self.cubic_traj(ti, tf, 0, 0, posi, posf);
-           while (i <= steps)
-               a(i) = self.cubic_polynomial(traj,  ti + ((i*timestep)/1000));
-               i = i+1;
-           end
-       end
-       
-      function a = quintic_linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
-           i = 1;
-           steps = 1000*(tf-ti)/timestep;
-           traj = self.quintic_traj(posi, posf, ti, tf, 0, 0, 0, 0);
-           while (i <= steps)
-               a(i) = self.quintic_polynomial(traj,  ti + ((i*timestep)/1000));
-               i = i+1;
-           end
-      end
-        
-      
-            function a = interpolated_quintic_linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
-           i = 1;
-           intTime = (tf - ti)*1000;
-           steps = intTime*(tf-ti)/timestep;
-           traj = self.quintic_traj(posi, posf, ti, tf, 0, 0, 0, 0);
-           while (i <= steps)
-               a(i) = self.quintic_polynomial(traj,  ti + ((i*timestep)/1000));
-               i = i+1;
-           end
-      end
-        
         function C = cubic_polynomial(self, a, t)
             C = a(1,1) + t * a(2,1) + (t^2) * a(3,1) + (t^3) * a(4,1);
         end
@@ -87,6 +54,21 @@ classdef Traj_Planner
         function C = quintic_polynomial(self, a, t)
             C = a(1,1) + t * a(2,1) + (t^2) * a(3,1) + (t^3) * a(4,1) + (t^4) * a(5,1) + (t^5) * a(6,1);
         end
+        
+       function a = linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
+           traj = self.cubic_traj(ti, tf, 0, 0, posi, posf);
+           a = self.cubic_polynomial(traj,  timestep);
+       end
+       
+       
+      function a = quintic_linear_traj(self,posi, posf, ti, tf, timestep) %ti/f = s, timestep = ms
+           traj = self.quintic_traj(posi, posf, ti, tf, 0, 0, 0, 0);
+           a = self.quintic_polynomial(traj,  timestep);
+      end
+        
+      
+        
+
     end
 end
 

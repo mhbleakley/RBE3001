@@ -112,9 +112,9 @@ classdef Robot < handle
             if GETVEL
                 SERVER_ID_READ =1822;
                 returnPacket = self.read(SERVER_ID_READ);
-                packet(2,1) = returnPacket(2);
-                packet(2,2) = returnPacket(5);
-                packet(2,3) = returnPacket(8);
+                packet(2,1) = returnPacket(3);
+                packet(2,2) = returnPacket(6);
+                packet(2,3) = returnPacket(9);
             end
             %disp(packet);
         end
@@ -276,7 +276,8 @@ classdef Robot < handle
             T = self.fk3001(M);
             end
         
-            function plot_arm(self,q)
+            function plot_arm(self,q,velocity)
+                q = q*(pi/180);
                 
                 T01 =   [ 1, 0, 0,  0;
                          0, 1, 0,  0;
@@ -341,7 +342,13 @@ classdef Robot < handle
                  line([X(5),X(5)],[Y(5),Y(5)+50],[Z(5),Z(5)], 'Color', 'g', 'LineWidth', 2);
                  line([X(5),X(5)],[Y(5),Y(5)],[Z(5),Z(5)+50], 'Color', 'b', 'LineWidth', 2);
                  
+%                  line([X(5),X(5)+velocity(1)/50],[Y(5),Y(5)+velocity(1)/50],[Z(5),Z(5)+velocity(1)/50], 'Color', 'magenta', 'LineWidth', 2);
+                 %Velocity Vector
+                 hold on
+                 quiver3(X(5),Y(5),Z(5),(velocity(1)/50),velocity(2)/50,velocity(1)/50)
+                 hold off
                  legend('arm','x-axis', 'y-axis', 'z-axis');
+                 drawnow;
             end
             
             function Q = ik3001(self, pos)
@@ -378,7 +385,6 @@ classdef Robot < handle
             
             Q = [theta1, theta2, theta3]; 
             Q = Q * (360/(2*pi));
-            disp(Q);
             
             end
             
@@ -436,9 +442,11 @@ classdef Robot < handle
                     J41 J42 J43;
                     J51 J52 J53;
                     J61 J62 J63;];
-                disp(J);
+%                 disp(J);
             end
             
-        
+            function PD = fdk3001(self, q, qd)
+                PD = self.jacob3001(q)*qd;
+            end
     end
 end

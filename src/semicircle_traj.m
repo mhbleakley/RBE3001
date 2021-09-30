@@ -48,7 +48,7 @@ timestep = 1;
 y12traj = traj.interpolated_quintic_linear_traj(Pos1(1,2), Pos2(1,2), 0, 3, timestep);
 
 for j = [1:3000]
-    z12traj(j) = 30 + abs(sqrt(100-(y12traj(j))^2));
+    z12traj(j) = 30 + abs(sqrt(1-(y12traj(j))^2));
 %       disp(130 - 65*(sin(y12traj(j))))
     x12traj(j) = 100;
 end
