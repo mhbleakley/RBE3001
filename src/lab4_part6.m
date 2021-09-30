@@ -36,7 +36,9 @@ try
   
 % Linear Trajectory 
 Pos1 = [50,55,75];
-Pos2 = [100 0 195];
+Pos2 = [100 0 295];
+Ang1 = pp.ik3001(Pos1);
+Ang2 = [0 0 -90];
 
 pp.interpolate_jp(pp.ik3001(Pos1),1000);
 % pp.interpolate_jp([100 0 295],1000);
@@ -52,56 +54,77 @@ eStop = 0;
 ee_jacob = pp.jacob3001(fkAngle);
 detJ = det(ee_jacob(1:3,:))
 x12traj = -500;
-y12traj = -500
-z12traj = -500
+y12traj = -500;
+z12traj = -500;
 
 tic
-while toc < 5 && eStop == 0;
+while toc < 6 && eStop == 0;
     
-            ee_jacob = pp.jacob3001(fkAngle)
-            detJ = det(ee_jacob(1:3,:))
-            if abs(detJ) <= 100
-                eStop = 1;
-                disp("Singularity Detected")
-                
-            end
+
+    if abs(detJ) < 2000
+        eStop = 1;
+%         disp("Singularity Detected")
+        
+    end
     
-    if ~(pp.finished_movement(transpose(endpoint(1:3,1)), [x12traj y12traj z12traj])) && (toc <= 3) && eStop == 0;
+%     if ~(pp.finished_movement(transpose(endpoint(1:3,1)), pp.fk3001([x12traj y12traj z12traj]))) && eStop == 0 && toc<=5
+    if ~(pp.finished_movement(pp.fk3001([x12traj y12traj z12traj]), Ang2)) && eStop == 0 && toc <= 5
             
         if(eStop == 0)    
-        x12traj = traj.linear_traj(Pos1(1,1), Pos2(1,1), 0, 3, toc)  
-        y12traj = traj.linear_traj(Pos1(1,2), Pos2(1,2), 0, 3, toc)
-        z12traj = traj.linear_traj(Pos1(1,3), Pos2(1,3), 0, 3, toc)
-        pp.interpolate_jp(pp.ik3001([x12traj, y12traj, z12traj]),10);
+        x12traj = traj.cubic_poly_traj(0,5,0,0,Ang1(1,1), Ang2(1,1), toc);  
+        y12traj = traj.cubic_poly_traj(0,5,0,0, Ang1(1,2), Ang2(1,2), toc);
+        z12traj = traj.cubic_poly_traj(0,5,0,0, Ang1(1,3), Ang2(1,3), toc);
+        pp.interpolate_jp([x12traj, y12traj, z12traj],100);
         end
+        
+    end
+    
+     if (pp.finished_movement(transpose(fkAngle), Ang2)) && eStop == 0 
+        
+        if (detJ > 2000)
+         eStop = 1;
+        end
+        
+    end
+    
+    if eStop == 1
+        msg = 'Error occurred.';
+        disp("Singularity Detected")
+%         error(msg)
     end
     
     AV = pp.measured_js(1,1);
-    fkAngle = transpose(AV(1, :));
+    fkAngle = transpose(AV(1, :))
     qVelocity = transpose(AV(2,:));
     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
-%     ee_jacob = pp.jacob3001(fkAngle);
-%     detJ = det(ee_jacob(1:3,:))
     ee_velocity = ee_jacob(1:3,1:3)*qVelocity;
-    pp.plot_arm(fkAngle,ee_velocity)
+%     pp.plot_arm(fkAngle,ee_velocity);
+    ee_jacob = pp.jacob3001(fkAngle);
+    detJ = det(ee_jacob(1:3,:))
     
     if(prevEndpoint(1,1) ~= endpoint(1,1) || prevEndpoint(2,1) ~= endpoint(2,1) || prevEndpoint(3,1) ~= endpoint(3,1) && 0 ~= endpoint(1,1) && 0 ~= endpoint(2,1) && 0 ~= endpoint(3,1))
-        lin_traj_m(i, 1) = toc;
-        lin_traj_m(i, 2) = AV(2,1);
-        lin_traj_m(i, 3) = AV(2,2);
-        lin_traj_m(i, 4) = AV(2,3);
-
-        lin_traj_m(i,5) = ee_velocity(1,1);
-        lin_traj_m(i,6) = ee_velocity(2,1);
-        lin_traj_m(i,7) = ee_velocity(3,1);
-        lin_traj_m(i,8) = sqrt(ee_velocity(1,1)^2 + ee_velocity(2,1)^2 + ee_velocity(3,1)^2); %Calculates Scalar Velocity
+        M(i, 1) = toc;
+        M(i, 2) = detJ;
+      
         i = i+1;
     end
 
     prevEndpoint = endpoint;
     
 end
-  
+ 
+writematrix(M,'DetJ_data.csv');
+filename = 'DetJ_data.csv';
+motionData = csvread(filename);
+
+time = motionData(:,1);
+DetJ = motionData(:,2);
+
+plot(time,DetJ);
+
+title("Determinant vs Time");
+xlabel('Time(ms)') ;
+ylabel('Determinant'); 
   
   catch exception
     getReport(exception)
