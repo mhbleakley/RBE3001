@@ -37,6 +37,12 @@ classdef Traj_Planner
             a = M\givenVals;
          end
          
+         
+         
+         function a = cubic_poly_traj(self, ti, tf, vi, vf, posi, posf, time)
+            x = self.cubic_traj(ti, tf, vi, vf, posi, posf);
+            a = self.cubic_polynomial(x, time);
+         end 
 %          function a = linear_trajectory(self, ti, tf, posi, posf)
 %             M = [1 ti;
 %                 1 tf];
