@@ -83,7 +83,7 @@ while toc < 7
     endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
     ee_jacob = pp.jacob3001(fkAngle);
     ee_velocity = ee_jacob(1:3,1:3)*qVelocity;
-    pp.plot_arm(fkAngle,ee_velocity);
+    pp.plot_arm(fkAngle,ee_velocity)
     
     if(prevEndpoint(1,1) ~= endpoint(1,1) || prevEndpoint(2,1) ~= endpoint(2,1) || prevEndpoint(3,1) ~= endpoint(3,1) && 0 ~= endpoint(1,1) && 0 ~= endpoint(2,1) && 0 ~= endpoint(3,1))
         lin_traj_m(i, 1) = toc;
@@ -94,6 +94,7 @@ while toc < 7
         lin_traj_m(i,5) = ee_velocity(1,1);
         lin_traj_m(i,6) = ee_velocity(2,1);
         lin_traj_m(i,7) = ee_velocity(3,1);
+        lin_traj_m(i,8) = sqrt(ee_velocity(1,1)^2 + ee_velocity(2,1)^2 + ee_velocity(3,1)^2); %Calculates Scalar Velocity
         i = i+1;
     end
 
@@ -107,16 +108,18 @@ filename = 'linear_velocity_data.csv';
 traj_data = csvread(filename);
 time = traj_data(:,1);
 
-% Position
+% Linear Velocities
 xVel = traj_data(:,5);
 yVel = traj_data(:,6);
 zVel = traj_data(:,7);
 
+%Angular Velocities
 xAngVel = traj_data(:,2);
 yAngVel = traj_data(:,3);
 zAngVel = traj_data(:,4);
 
-% ScalarVel = sqrt(((xVel(1,1)^2) + xVel(1,1)^2) + xVel(1,1)^2)) + (yVel^2) + (zVel^2));
+%Scalar Velocity
+ScalarVel = traj_data(:,8);
 
 subplot(3,2,1)
 plot(time,xVel); 
@@ -125,7 +128,7 @@ plot(time,yVel);
 plot(time,zVel);
 hold off
 
-title("End Effector Linear Velocity)");
+title("End Effector Linear Velocity");
 xlabel('Time(s)') ;
 ylabel('Linear Velocity(mm/s)'); 
 legend('X Velocity', 'Y Velocity', 'Z Velocity');
@@ -137,7 +140,7 @@ plot(time,yAngVel);
 plot(time,zAngVel);
 hold off
 
-title("End Effector Angular Velocity)");
+title("End Effector Angular Velocity");
 xlabel('Time(s)') ;
 ylabel(' Angular Velocity(deg/s)'); 
 legend('X Angular Velocity', 'Y Angular Velocity', 'Z Angular Velocity');
@@ -145,7 +148,7 @@ legend('X Angular Velocity', 'Y Angular Velocity', 'Z Angular Velocity');
 subplot(3,2,3)
 plot(time,ScalarVel); 
 
-title("End Effector Scalar Linear Velocity)");
+title("End Effector Scalar Linear Velocity");
 xlabel('Time(s)') ;
 ylabel(' Scalar Linear Velocity(deg/s)'); 
 legend('Scalar Linear Velocity');
