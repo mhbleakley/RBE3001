@@ -368,8 +368,7 @@ classdef Robot < handle
             
             alpha = atan2(s,r);
             D2 = ((a1^2) + (r^2) + (s^2)- (a2^2))/(2*a1*(sqrt((r^2) + ( s^2))));
-            disp("D2 = ")
-            disp(D2)
+
             C2 = -(sqrt(1 - (D2^2)));
             beta = atan2(C2,D2);
             theta2 = pi/2 - (alpha - beta);
