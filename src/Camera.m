@@ -19,7 +19,7 @@ classdef Camera < handle
     methods
         function self = Camera()
             % CAMERA Construct an instance of this class
-            self.cam = webcam(1); % Get camera object
+            self.cam = webcam('/dev/video0'); % Get camera object
             self.params = self.calibrate(); % Run Calibration Function
             [self.cam_imajl, self.cam_pose] = self.getCameraPose();
         end
