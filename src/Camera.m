@@ -14,13 +14,17 @@ classdef Camera < handle
         cam;
         cam_pose;
         cam_imajl;
+        testIn
     end
     
     methods
         function self = Camera()
             % CAMERA Construct an instance of this class
-            self.cam = webcam('/dev/video0'); % Get camera object
-            self.params = self.calibrate(); % Run Calibration Function
+            self.cam = webcam(2); % Get camera object
+%             self.params = self.calibrate(); % Run Calibration Function
+            load("cam_workspace", "cameraParams");
+            self.params = cameraParams;
+            self.testIn = cameraParams.Intrinsics;
             [self.cam_imajl, self.cam_pose] = self.getCameraPose();
         end
 
@@ -44,7 +48,7 @@ classdef Camera < handle
             try
                 disp("Clear surface of any items, then press any key to continue");
                 pause;
-                camcalib; % Change this if you are using a different calibration script
+                Intrinsic_cal; % Change this if you are using a different calibration script
                 params = cameraParams;
                 disp("This is REEE Frogg:")
                 disp("Camera calibration complete!");
@@ -58,7 +62,7 @@ classdef Camera < handle
         % Returns an undistorted camera image
         function img = getImage(self)
             raw_img =  snapshot(self.cam);
-            [img, new_origin] = undistortFisheyeImage(raw_img, self.params.Intrinsics, 'OutputView', 'full');
+            [img, new_origin] = undistortFisheyeImage(raw_img, self.testIn, 'OutputView', 'full');
         end
 
         
@@ -77,6 +81,7 @@ classdef Camera < handle
             raw_img =  snapshot(self.cam);
 %             % 2. Undistort Image based on params
             [img, newIs] = undistortFisheyeImage(raw_img, self.params.Intrinsics, 'OutputView', 'full');
+            self.params.Intrinsics = newIs;
             % 3. Detect checkerboard in the image
             [imagePoints, boardSize] = detectCheckerboardPoints(img);
             % 4. Compute transformation
