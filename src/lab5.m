@@ -86,16 +86,21 @@ POI4 = ginput(1)
 
     %Tuned with [100 0 0], [200 0 0], [0 -100 0] and [0 100 0]
     transMatrix = [0 1 0 100;
-                   1 0 0 -75;
+                   1 0 0 -50;
                    0 0 -1 0;
                    0 0 0 1;];
     
+    %Inverse of transMatrix           
+    checkerToBase = [0 1 0 50;
+                     1 0 0 -100;
+                     0 0 -1 0;
+                     0 0 0 1];
         
-    checkPoint1 = transMatrix * [100; 0; 0; 1]
-    checkPoint2 = transMatrix * [175; 0; 0; 1]
-    checkPoint3 = transMatrix * [0; -100; 0; 1]
-    checkPoint4 = transMatrix * [0; 100; 0; 1]
-    
+    checkPoint1 = transMatrix * [75; 0; 0; 1]
+    checkPoint2 = transMatrix * [150; 0; 0; 1]
+    checkPoint3 = transMatrix * [-25; -100; 0; 1]
+    checkPoint4 = transMatrix * [-25; 100; 0; 1]
+
 
 catch exception
     fprintf('\n ERROR!!! \n \n');
