@@ -44,120 +44,87 @@ green_place = [150, 50, 11];
 pink_place = [75, -125, 11];
 yellow_place = [75, 125, 11];
 magnification = 50;
+Intrinsics = cam.cam_imajl;
+Extrinsics = cam.cam_pose;
+
+    transMatrix = [0 1 0 100;
+                   1 0 0 -50;
+                   0 0 -1 0;
+                   0 0 0 1;];
+               
+    %Inverse of transMatrix           
+    checkerToBase = [0 1 0 50;
+                     1 0 0 -100;
+                     0 0 -1 0;
+                     0 0 0 1];
+
 %% Main Loop
 try
     % Set up camera
     if cam.params == 0
         error("No camera parameters found!");
     end
-
-    %Tuned with [100 0 0], [200 0 0], [0 -100 0] and [0 100 0]
-    transMatrix = [0 1 0 100;
-                   1 0 0 -50;
-                   0 0 -1 0;
-                   0 0 0 1;];
-    
-
+    disp("done calibrating")
+  
     pause(10);
     img = cam.getImage();
     checkerboard = checkerboard_Mask(img);
-    redBall = redMask(img);
+
+    % Finding Centroid Green Ball
     greenBall = greenMask(img);
-    yellowBall = yellowMask(img);
-    orangeBall = orangeMask(img);
-    imshow(checkerboard);
-    figure, imshow(redBall);
-    figure, imshow(greenBall);
-    figure, imshow(yellowBall);
-    figure, imshow(orangeBall);
-%     imshow(img)
-% Igray = rgb2gray(img);
-% imshow(Igray);
-% level = 0.67;
-% Ithresh = im2bw(Igray,level);
-% imshowpair(img, Ithresh, 'montage');
+    exgreenFill = imfill(greenBall,'holes');
+    greenFill = xor(bwareaopen(exgreenFill,25),  bwareaopen(exgreenFill,1000));
+    green = regionprops(greenFill);
+    greenCentroid = green.Centroid;
+    greenChecker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), greenCentroid);
+    greenPoint(1:2,1) = greenChecker;
+    greenPoint(1,1) = ((greenPoint(1,1))/1.05)+ 1.75; 
+    greenPoint(2,1) = (((greenPoint(2,1))^2)*0.0002) + (0.94 * (greenPoint(2,1))) + 5.5; 
+    greenPoint(3,1) = 0;
+    greenPoint(4,1) = 1;
+    greenPoint = checkerToBase*greenPoint
+    
+    % Finding Centroid Red Ball
+%     redBall = redMask(img);
+%     redFill = imfill(redBall,'holes');
+%     red = regionprops(redFill);
+%     redCentroid = red.Centroid;
+%     redChecker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), redCentroid);
+%     redPoint(1:2,1) = redChecker;
+%     redPoint(3,1) = 0;
+%     redPoint(4,1) = 1;
+%     redPoint = checkerToBase*redPoint
 
-%     imHSV = rgb2hsv(img);
-% 
-%     % Get the saturation channel.
-%     saturation = imHSV(:, :, 2);
-% 
-%     % Threshold the image
-%     t = graythresh(saturation);
-%     imBall = (saturation > t);
-% 
-%     figure; imshow(imBall, 'InitialMagnification', magnification);
-%     title('Segmented Balls');
 
-% Im=img;
-% rmat=Im(:,:,1);
-% gmat=Im(:,:,2);
-% bmat=Im(:,:,3);
-% subplot(2,2,1), imshow(rmat);
-% title('Red Plane');% Igray = rgb2gray(img);
-% imshow(Igray);
-% level = 0.67;
-% Ithresh = im2bw(Igray,level);
-% imshowpair(img, Ithresh, 'montage');
+%     % Finding Centroid Yellow Ball
+%     yellowBall = yellowMask(img);
+%     yellowFill = imfill(yellowBall,'holes');
+%     yellow = regionprops(yellowFill);
+%     yellowCentroid = yellow.Centroid;
+%     yellowChecker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), yellowCentroid);
+%     yellowPoint(1:2,1) = yellowChecker;
+%     yellowPoint(3,1) = 0;
+%     yellowPoint(4,1) = 1;
+%     yellowPoint = checkerToBase*yellowPoint
+%     
+%     figure, imshow(redFill)
+%     figure, imshow(yellowFill)
+%     figure, imshow(greenFill)
 
-% subplot(2,2,2), imshow(gmat);
-% title('Green Plane');
-% subplot(2,2,3), imshow(bmat);
-% title('Blue Plane');
-% subplot(2,2,4), imshow(I);
-% title('Original Image');
-% %%
-% levelr = 0.63;
-% levelg = 0.5;
-% levelb = 0.4;
-% i1=im2bw(rmat,levelr);
-% i2=im2bw(gmat,levelg);
-% i3=im2bw(bmat,levelb);
-% Isum = (i1&i2&i3);
-% % Plot the data
-% subplot(2,2,1), imshow(i1);
-% title('Red Plane');
-% subplot(2,2,2), imshow(i2);
-% title('Green Plane');
-% subplot(2,2,3), imshow(i3);
-% title('Blue Plane');
-% subplot(2,2,4), imshow(Isum);
-% title('Sum of all the planes');
-% %% Complement Image and Fill in holes
-% Icomp = imcomplement(Isum);
-% Ifilled = imfill(Icomp,'holes');
-% figure, imshow(Ifilled);
-% %%
-% se = strel('disk', 25);
-% Iopenned = imopen(Ifilled,se);
-% % figure,imshowpair(Iopenned, I);
-% imshow(Iopenned);
-% %% Extract features
-% Iregion = regionprops(Iopenned, 'centroid');
-% [labeled,numObjects] = bwlabel(Iopenned,4);
-% stats = regionprops(labeled,'Eccentricity','Area','BoundingBox');
-% areas = [stats.Area];
-% eccentricities = [stats.Eccentricity];
-% %% Use feature analysis to count skittles objects
-% idxOfSkittles = find(eccentricities);
-% statsDefects = stats(idxOfSkittles);
-% figure, imshow(I);
-% hold on;
-% for idx = 1 : length(idxOfSkittles)
-%         h = rectangle('Position',statsDefects(idx).BoundingBox,'LineWidth',2);
-%         set(h,'EdgeColor',[.75 0 0]);
-%         hold on;
-% end
-% if idx > 10
-% title(['There are ', num2str(numObjects), ' objects in the image!']);
-% end
-% hold off;
 
-% Igray = rgb2gray(img);
-% imshow(Igray);
-% level = 0.67;
-% Ithresh = im2bw(Igray,level);
-% imshowpair(img, Ithresh, 'montage');
+    % Finding Centroid Orange Ball
+%     orangeBall = orangeMask(img);
+%     orangeFill = imfill(orangeBall,'holes');
+%     orange = regionprops(orangeFill);
+%     orangeCentroid = orange.Centroid;
+%     orangeChecker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), orangeCentroid);
+%     orangePoint(1:2,1) = orangeChecker;
+%     orangePoint(3,1) = 0;
+%     orangePoint(4,1) = 1;
+%     orangePoint = checkerToBase*orangePoint   
+
+    
+
 
 catch exception
     fprintf('\n ERROR!!! \n \n');
