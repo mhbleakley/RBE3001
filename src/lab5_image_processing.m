@@ -34,6 +34,7 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 robot = Robot(myHIDSimplePacketComs);
+traj = Traj_Planner();
 
 cam = Camera();
 cam.DEBUG = DEBUG_CAM;
@@ -60,13 +61,17 @@ Extrinsics = cam.cam_pose;
 
 %% Main Loop
 try
+    
+    zeroPoint = [100, 0, 195];
+    robot.interpolate_jp(robot.ik3001(zeroPoint), 2000);
+    
     % Set up camera
     if cam.params == 0
         error("No camera parameters found!");
     end
     disp("done calibrating")
   
-    pause(10);
+    pause(5);
     img = cam.getImage();
     checkerboard = checkerboard_Mask(img);
 
@@ -78,12 +83,29 @@ try
     greenCentroid = green.Centroid;
     greenChecker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), greenCentroid);
     greenPoint(1:2,1) = greenChecker;
-    greenPoint(1,1) = ((greenPoint(1,1))/1.05)+ 1.75; 
-    greenPoint(2,1) = (((greenPoint(2,1))^2)*0.0002) + (0.94 * (greenPoint(2,1))) + 5.5; 
     greenPoint(3,1) = 0;
     greenPoint(4,1) = 1;
-    greenPoint = checkerToBase*greenPoint
+    baseGreenPoint = checkerToBase*greenPoint
+    newGreenPoint(1,1) = (((baseGreenPoint(1,1))^3)*0.0000153556631) + (((baseGreenPoint(1,1))^2)*-0.00206258926) + (((baseGreenPoint(1,1))*0.972513954)) + 13.6730092; 
+    newGreenPoint(2,1) = (((baseGreenPoint(2,1))^3)*-0.00000158817254) + (((baseGreenPoint(2,1))^2)*0.00111751456) + (((baseGreenPoint(2,1)))*0.951520909) - 12.9545212; 
+    newGreenPoint(3,1) = 15;
     
+    goToPoint = transpose(newGreenPoint);
+    checkPoint = goToPoint(1, 1:3);
+    tic
+    while toc < 5.2
+        if ~(robot.finished_movement(zeroPoint, checkPoint)) && (toc <= 3)
+        x = traj.linear_traj(100, checkPoint(1), 0, 3, toc);
+        y = traj.linear_traj(0, checkPoint(2), 0, 3, toc);
+        robot.interpolate_jp(robot.ik3001([x, y, 195]),0);
+        elseif ~(robot.finished_movement(zeroPoint, checkPoint)) && toc > 3 && toc <= 5
+        z = traj.linear_traj(195, checkPoint(3), 3, 5, toc);
+        robot.interpolate_jp(robot.ik3001([x, y, z]),0);
+        end
+    end
+    robot.interpolate_jp(robot.ik3001(zeroPoint), 2000);
+    pause(5);
+
     % Finding Centroid Red Ball
 %     redBall = redMask(img);
 %     redFill = imfill(redBall,'holes');

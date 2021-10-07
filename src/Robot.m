@@ -394,13 +394,13 @@ classdef Robot < handle
 %                 currentPV = self.measured_js(1,0);
                 currentPos = currPos;
                 
-                if(abs(currentPos(1,1)) >= abs(targetPos(1,1))-2 && abs(currentPos(1,2)) >= abs(targetPos(1,2))-2 && abs(currentPos(1,3)) >= abs(targetPos(1,3))-2)
+                if(abs(currentPos(1,1)) >= abs(targetPos(1,1))-.5 && abs(currentPos(1,2)) >= abs(targetPos(1,2))-.5 && abs(currentPos(1,3)) >= abs(targetPos(1,3))-.5)
                     B1 = 1;
                 else 
                     B1 = 0;
                 end
                 
-                if(abs(currentPos(1,1)) <= abs(targetPos(1,1)) + 2 && abs(currentPos(1,2))+2 <= abs(targetPos(1,2)) + 2 && abs(currentPos(1,3)) <= abs(targetPos(1,3))+2)
+                if(abs(currentPos(1,1)) <= abs(targetPos(1,1)) + .5 && abs(currentPos(1,2))+1 <= abs(targetPos(1,2)) + .5 && abs(currentPos(1,3)) <= abs(targetPos(1,3))+.5)
                     B2 = 1;
                 else 
                     B2 = 0;
