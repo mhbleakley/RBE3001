@@ -86,10 +86,28 @@ try
     greenPoint(3,1) = 0;
     greenPoint(4,1) = 1;
     baseGreenPoint = checkerToBase*greenPoint
-    newGreenPoint(1,1) = (((baseGreenPoint(1,1))^3)*0.0000153556631) + (((baseGreenPoint(1,1))^2)*-0.00206258926) + (((baseGreenPoint(1,1))*0.972513954)) + 13.6730092; 
-    newGreenPoint(2,1) = (((baseGreenPoint(2,1))^3)*-0.00000158817254) + (((baseGreenPoint(2,1))^2)*0.00111751456) + (((baseGreenPoint(2,1)))*0.951520909) - 12.9545212; 
-    newGreenPoint(3,1) = 15;
+%     newGreenPoint(1,1) = (((baseGreenPoint(1,1))^3)*0.0000153556631) + (((baseGreenPoint(1,1))^2)*-0.00206258926) + (((baseGreenPoint(1,1))*0.972513954)) + 13.6730092; 
+%     newGreenPoint(2,1) = (((baseGreenPoint(2,1))^3)*-0.00000158817254) + (((baseGreenPoint(2,1))^2)*0.00111751456) + (((baseGreenPoint(2,1)))*0.951520909) - 12.9545212; 
+%     newGreenPoint(3,1) = 15;
     
+
+    % Correction math
+    
+    xPoint = baseGreenPoint(1,1);
+    yPoint = baseGreenPoint(2,1);
+    
+    xAngle = atan2((200-xPoint), 260);
+    yAngle = atan2(yPoint, 260);
+    
+    xCorrection = 11 * (tan(xAngle));
+    yCorrection = 11 * (tan(yAngle));
+    
+    newGreenPoint(1,1) = baseGreenPoint(1,1) - xCorrection; 
+    newGreenPoint(2,1) = baseGreenPoint(2,1) - yCorrection;
+    newGreenPoint(3,1) = 10;
+    
+    disp(newGreenPoint);
+
     goToPoint = transpose(newGreenPoint);
     checkPoint = goToPoint(1, 1:3);
     tic
@@ -103,6 +121,17 @@ try
         robot.interpolate_jp(robot.ik3001([x, y, z]),0);
         end
     end
+    
+    tic
+    while toc < 3
+    angle = robot.measured_js(1,0);
+    fkAngle = transpose(angle(1, :));
+    endpoint = robot.fk3001(fkAngle)* [0; 0; 0; 1];
+    endAnglePoint = robot.ik3001(endpoint(1:3, 1));
+    endAnglePoint(1,3) = endAnglePoint(1,3) - 9;
+    robot.interpolate_jp(endAnglePoint, 2000);
+    end
+    
     robot.interpolate_jp(robot.ik3001(zeroPoint), 2000);
     pause(5);
 
