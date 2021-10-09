@@ -34,10 +34,9 @@ try
   % packet sizes up to 64 bytes.
   packet = zeros(15, 1, 'single');
   
-  pp.dh2fk([0])
   
   
-  %CODE GOES HERE
+    
   
   
   catch exception

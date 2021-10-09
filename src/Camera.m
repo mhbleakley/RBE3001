@@ -59,6 +59,60 @@ classdef Camera < handle
             end          
         end
         
+        %Identifies the centroid of an object of a specified color, the
+        %in/extrinsic parameters and the checker to base frame matrix
+        function obj_point = findBall(self,color,Intrinsics,Extrinsics,checkerToBase)
+            img = self.getImage();
+            
+            % Apply mask based upon chosen color
+            if color == "green"
+                img = greenMask(img);
+            end
+            if color == "red"
+                img = redMask(img);
+            end
+            if color == "yellow"
+                img = yellowMask(img);
+            end
+            if color == "orange"
+                img = orangeMask(img);
+            end
+            
+            try
+                % Image Processing
+                exFill = imfill(img,'holes');
+                fill = xor(bwareaopen(exFill,25),  bwareaopen(exFill,1000));
+                ball = regionprops(fill);
+                centroid = ball.Centroid;
+                checker = pointsToWorld(Intrinsics, Extrinsics(1:3, 1:3), Extrinsics (1:3, 4), centroid);
+                Point(1:2,1) = checker;
+                Point(3,1) = 0;
+                Point(4,1) = 1;
+                basePoint = checkerToBase*Point;
+                
+                % Correction math
+                xPoint = basePoint(1,1);
+                yPoint = basePoint(2,1);
+                
+                xAngle = atan2((200-xPoint), 260);
+                yAngle = atan2(yPoint, 260);
+                
+                xCorrection = 11 * (tan(xAngle));
+                yCorrection = 11 * (tan(yAngle));
+                
+                newPoint(1,1) = basePoint(1,1) - xCorrection;
+                newPoint(2,1) = basePoint(2,1) - yCorrection;
+                newPoint(3,1) = 10;
+                obj_point = newPoint;
+                
+            catch exception
+                % No centroid found
+                obj_point = [-500; -500; -500];
+%                 disp(getReport(exception))
+            end
+            
+        end
+        
         % Returns an undistorted camera image
         function img = getImage(self)
             raw_img =  snapshot(self.cam);

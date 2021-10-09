@@ -449,5 +449,45 @@ classdef Robot < handle
             function PD = fdk3001(self, q, qd)
                 PD = self.jacob3001(q)*qd;
             end
+            
+            function goto_ball(self,checkPoint,endPoint)
+                zeroPoint = [100, 0, 195];
+                traj2 = Traj_Planner();
+                
+                tic
+                while toc < 5.2
+                    if ~(self.finished_movement(zeroPoint, checkPoint)) && (toc <= 3)
+                        x = traj2.linear_traj(100, checkPoint(1), 0, 3, toc);
+                        y = traj2.linear_traj(0, checkPoint(2), 0, 3, toc);
+                        self.interpolate_jp(self.ik3001([x, y, 195]),0);
+                    elseif ~(self.finished_movement(zeroPoint, checkPoint)) && toc > 3 && toc <= 5
+                        z = traj2.linear_traj(195, checkPoint(3), 3, 5, toc);
+                        self.interpolate_jp(self.ik3001([x, y, z]),0);
+                    end
+                end
+                
+                tic
+                while toc < 3
+                    angle = self.measured_js(1,0);
+                    fkAngle = transpose(angle(1, :));
+                    endpoint = self.fk3001(fkAngle)* [0; 0; 0; 1];
+                    endAnglePoint = self.ik3001(endpoint(1:3, 1));
+                    endAnglePoint(1,3) = endAnglePoint(1,3) - 9;
+                    self.interpolate_jp(endAnglePoint, 2000);
+                    
+                end
+                self.closeGripper();
+                
+                self.interpolate_jp(self.ik3001(zeroPoint), 2000);
+                pause(2.5);
+                self.interpolate_jp(self.ik3001(endPoint), 2000);
+                pause(2.5);
+                self.openGripper();
+                pause(1);
+                self.interpolate_jp(self.ik3001(zeroPoint), 2000);
+                pause(2.5);
+                
+            end
+            
     end
 end
