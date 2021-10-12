@@ -34,9 +34,16 @@ try
   % packet sizes up to 64 bytes.
   packet = zeros(15, 1, 'single');
   
+  tic
+  while toc < 3
+      angle = pp.measured_js(1,0);
+      fkAngle = transpose(angle(1, :));
+      endpoint = pp.fk3001(fkAngle)* [0; 0; 0; 1];
+  end
+  disp(endpoint);
   
   
-    
+  %CODE GOES HERE
   
   
   catch exception
