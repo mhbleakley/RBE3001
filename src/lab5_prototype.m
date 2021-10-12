@@ -40,10 +40,15 @@ cam = Camera();
 cam.DEBUG = DEBUG_CAM;
 
 %% Place Poses per color
-red_place = [150, -50, 25];
-orange_place = [150, 50, 25];
-yellow_place = [75, -125, 25];
-green_place = [75, 150, 25];
+% red_place = [150, -50, 25];
+% orange_place = [150, 50, 25];
+% yellow_place = [75, -150, 25];
+% green_place = [75, 150, 25];
+red_angle = [-90 90 -60];
+orange_angle = [90 90 -60];
+green_angle = [-90 90 -60];
+yellow_angle = [70 90 -60];
+
 Intrinsics = cam.cam_imajl;
 Extrinsics = cam.cam_pose;
 no_ball_found = [-500; -500; -500];
@@ -70,7 +75,7 @@ try
         error("No camera parameters found!");
     end
     disp("done calibrating")
-    pause(2.5);
+    pause(10);
     
     
     redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase);
@@ -89,7 +94,7 @@ try
         if greenPoint ~= no_ball_found
             goToPoint = transpose(greenPoint);
             checkPoint = goToPoint(1, 1:3);
-            robot.goto_ball(checkPoint,green_place);
+            robot.goto_ball(checkPoint,green_angle);
             
         else
             disp("no green found")
@@ -99,7 +104,7 @@ try
         if redPoint ~= no_ball_found
             goToPoint = transpose(redPoint);
             checkPoint = goToPoint(1, 1:3);
-            robot.goto_ball(checkPoint,red_place);
+            robot.goto_ball(checkPoint,red_angle);
             
         else
             disp("no red found")
@@ -109,7 +114,7 @@ try
         if yellowPoint ~= no_ball_found
             goToPoint = transpose(yellowPoint);
             checkPoint = goToPoint(1, 1:3);
-            robot.goto_ball(checkPoint,yellow_place);
+            robot.goto_ball(checkPoint,yellow_angle);
             
         else
             disp("no yellow found")
@@ -119,7 +124,7 @@ try
         if orangePoint ~= no_ball_found
             goToPoint = transpose(orangePoint);
             checkPoint = goToPoint(1, 1:3);
-            robot.goto_ball(checkPoint,orange_place);
+            robot.goto_ball(checkPoint,orange_angle);
             
         else
             disp("no orange found")

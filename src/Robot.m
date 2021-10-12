@@ -89,6 +89,17 @@ classdef Robot < handle
             end
         end
         
+%         function pos = readGripper(packet)
+%             try
+%                 ds = javaArray('java.lang.Byte',length(1));
+%                 intid = java.lang.Integer(packet.GRIPPER_ID);
+%                 pos = packet.myHIDSimplePacketComs.readBytes(intid, ds);
+%             catch exception
+%                 getReport(exception)
+%                 disp('Command error, reading too fast');
+%             end
+%         end
+        
         % Opens the gripper
         function openGripper(packet)
             packet.writeGripper(180);
@@ -407,7 +418,9 @@ classdef Robot < handle
                 end
                 
                 B = B1*B2;
-                
+                %                 disp(self.readGripper());
+%                 pause(5);
+
                 
             end
             
@@ -467,20 +480,21 @@ classdef Robot < handle
                 end
                 
                 tic
-                while toc < 3
-                    angle = self.measured_js(1,0);
-                    fkAngle = transpose(angle(1, :));
-                    endpoint = self.fk3001(fkAngle)* [0; 0; 0; 1];
-                    endAnglePoint = self.ik3001(endpoint(1:3, 1));
-                    endAnglePoint(1,3) = endAnglePoint(1,3) - 9;
-                    self.interpolate_jp(endAnglePoint, 2000);
-                    
-                end
+%                 while toc < 3
+%                     angle = self.measured_js(1,0);
+%                     fkAngle = transpose(angle(1, :));
+%                     endpoint = self.fk3001(fkAngle)* [0; 0; 0; 1];
+%                     endAnglePoint = self.ik3001(endpoint(1:3, 1));
+%                     endAnglePoint(1,3) = endAnglePoint(1,3) - 5;
+%                     self.interpolate_jp(endAnglePoint, 2000);
+%                     
+%                 end
                 self.closeGripper();
-                
+%                 disp(self.readGripper());
+%                 pause(5);
                 self.interpolate_jp(self.ik3001(zeroPoint), 2000);
                 pause(2.5);
-                self.interpolate_jp(self.ik3001(endPoint), 2000);
+                self.interpolate_jp(endPoint, 2000);
                 pause(2.5);
                 self.openGripper();
                 pause(1);

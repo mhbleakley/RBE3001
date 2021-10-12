@@ -96,15 +96,38 @@ classdef Camera < handle
                 
                 xAngle = atan2((200-xPoint), 260);
                 yAngle = atan2(yPoint, 260);
-                
-                xCorrection = 11 * (tan(xAngle));
-                yCorrection = 11 * (tan(yAngle));
+               
+ 
+                if yPoint > 0
+                     if xPoint < 50
+                        xCorrection = (11 * (tan(xAngle))) - 25;
+                        yCorrection = (11 * (tan(yAngle))) - 4;
+                     else
+                        xCorrection = (11 * (tan(xAngle))) - 15;
+                        yCorrection = (11 * (tan(yAngle))) + 9;
+                     end
+                else
+                    if xPoint < 50 
+                        yCorrection = (11 * (tan(yAngle))) + 9;
+                        xCorrection = (11 * (tan(xAngle)));
+                    else
+                        xCorrection = (11 * (tan(xAngle)));
+                        yCorrection = (11 * (tan(yAngle))) + 20;
+                    end
+                end
                 
                 newPoint(1,1) = basePoint(1,1) - xCorrection;
                 newPoint(2,1) = basePoint(2,1) - yCorrection;
                 newPoint(3,1) = 10;
                 obj_point = newPoint;
                 
+%                 if (newPoint(1,1) >= -25 &&  newPoint(1,1) <= 150 && newPoint(2,1) >= -125 && newPoint(2,1) <= 125)
+%                     obj_point = newPoint;
+%                 else
+%                     %Centroid out of checkerboard
+%                     obj_point = [-500; -500; -500];
+%                 end
+%                 
             catch exception
                 % No centroid found
                 obj_point = [-500; -500; -500];
