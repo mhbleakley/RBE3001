@@ -77,6 +77,9 @@ classdef Camera < handle
             if color == "orange"
                 img = orangeMask(img);
             end
+            if color == "blue"
+                img = blueMask(img);
+            end
             
             try
                 % Image Processing

@@ -46,8 +46,9 @@ cam.DEBUG = DEBUG_CAM;
 % green_place = [75, 150, 25];
 red_angle = [-90 90 -60];
 orange_angle = [90 90 -60];
-green_angle = [-90 90 -60];
+green_angle = [-60 90 -60];
 yellow_angle = [70 90 -60];
+blue_angle = [70 90 -60];
 
 Intrinsics = cam.cam_imajl;
 Extrinsics = cam.cam_pose;
@@ -82,9 +83,10 @@ try
     orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase);
     yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase);
     greenPoint = cam.findBall("green",Intrinsics,Extrinsics,checkerToBase);
+    bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase);
     none_present = 0;
     
-    if redPoint(1,1) == -500 && orangePoint(1,1) == -500 && yellowPoint(1,1) == -500 && greenPoint(1,1) == -500
+    if redPoint(1,1) == -500 && orangePoint(1,1) == -500 && yellowPoint(1,1) == -500 && greenPoint(1,1) == -500 && bluePoint(1,1) == -500
         none_present = 1;
     end
     
@@ -129,14 +131,24 @@ try
         else
             disp("no orange found")
         end
-        
+
+        bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase);
+        if bluePoint ~= no_ball_found
+            goToPoint = transpose(bluePoint);
+            checkPoint = goToPoint(1, 1:3);
+            robot.goto_ball(checkPoint,blue_angle);
+            
+        else
+            disp("no blue found")
+        end
         
         redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase);
         orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase);
         yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase);
         greenPoint = cam.findBall("green",Intrinsics,Extrinsics,checkerToBase);
+        bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase);
         
-        if redPoint(1,1) == -500 && orangePoint(1,1) == -500 && yellowPoint(1,1) == -500 && greenPoint(1,1) == -500
+        if redPoint(1,1) == -500 && orangePoint(1,1) == -500 && yellowPoint(1,1) == -500 && greenPoint(1,1) == -500 && bluePoint(1,1) == -500
             none_present = 1;
         end
         
