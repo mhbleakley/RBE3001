@@ -40,26 +40,23 @@ cam = Camera();
 cam.DEBUG = DEBUG_CAM;
 
 %% Place Poses per color
-% red_place = [150, -50, 25];
-% orange_place = [150, 50, 25];
-% yellow_place = [75, -150, 25];
-% green_place = [75, 150, 25];
 red_angle = [-90 90 -60];
 orange_angle = [90 90 -60];
 green_angle = [-60 90 -60];
 yellow_angle = [70 90 -60];
 blue_angle = [70 90 -60];
 
+% Camera Parameters
 Intrinsics = cam.cam_imajl;
 Extrinsics = cam.cam_pose;
-no_ball_found = [-500; -500; -500];
+no_ball_found = [-500; -500; -500]; % Equal to the output of cam.findBall() when no ball of the chosen color is found
 
     transMatrix = [0 1 0 100;
                    1 0 0 -50;
                    0 0 -1 0;
                    0 0 0 1;];
                
-    %Inverse of transMatrix           
+    %Inverse of transMatrix, goes from checkerboard frame to the base frame           
     checkerToBase = [0 1 0 50;
                      1 0 0 -100;
                      0 0 -1 0;
@@ -67,7 +64,7 @@ no_ball_found = [-500; -500; -500];
 
 %% Main Loop
 try
-    
+    % Send the robot to the zero position and opens the gripper
     zeroPoint = [100, 0, 195];
     robot.interpolate_jp(robot.ik3001(zeroPoint), 2000);
     robot.openGripper();
@@ -78,7 +75,7 @@ try
     disp("done calibrating")
     pause(10);
     
-    
+    % Look for balls of each color
     redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase);
     orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase);
     yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase);
@@ -90,19 +87,19 @@ try
         none_present = 1;
     end
     
-    while(none_present == 0)
+    while(none_present == 0) % While there is at least one ball present on the checkerboard
         
-        greenPoint = cam.findBall("green",Intrinsics,Extrinsics,checkerToBase);
+        greenPoint = cam.findBall("green",Intrinsics,Extrinsics,checkerToBase); % Look for green balls
         if greenPoint ~= no_ball_found
-            goToPoint = transpose(greenPoint);
+            goToPoint = transpose(greenPoint); % Transposes the detected centroid for green
             checkPoint = goToPoint(1, 1:3);
-            robot.goto_ball(checkPoint,green_angle);
+            robot.goto_ball(checkPoint,green_angle);  % Goes to the green ball closest to the camera origin, picks it up, and drops it off
             
         else
             disp("no green found")
         end
         
-        redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase);
+        redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase); % Look for red balls
         if redPoint ~= no_ball_found
             goToPoint = transpose(redPoint);
             checkPoint = goToPoint(1, 1:3);
@@ -112,7 +109,7 @@ try
             disp("no red found")
         end
         
-        yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase);
+        yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase); % Look for yellow balls
         if yellowPoint ~= no_ball_found
             goToPoint = transpose(yellowPoint);
             checkPoint = goToPoint(1, 1:3);
@@ -122,7 +119,7 @@ try
             disp("no yellow found")
         end
         
-        orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase);
+        orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase); % Look for orange balls
         if orangePoint ~= no_ball_found
             goToPoint = transpose(orangePoint);
             checkPoint = goToPoint(1, 1:3);
@@ -132,7 +129,7 @@ try
             disp("no orange found")
         end
 
-        bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase);
+        bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase); % Look for blue balls
         if bluePoint ~= no_ball_found
             goToPoint = transpose(bluePoint);
             checkPoint = goToPoint(1, 1:3);
@@ -142,12 +139,14 @@ try
             disp("no blue found")
         end
         
+        % Check again to see if any balls remain
         redPoint = cam.findBall("red",Intrinsics,Extrinsics,checkerToBase);
         orangePoint = cam.findBall("orange",Intrinsics,Extrinsics,checkerToBase);
         yellowPoint = cam.findBall("yellow",Intrinsics,Extrinsics,checkerToBase);
         greenPoint = cam.findBall("green",Intrinsics,Extrinsics,checkerToBase);
         bluePoint = cam.findBall("blue",Intrinsics,Extrinsics,checkerToBase);
         
+        % If no balls are left, end the program
         if redPoint(1,1) == -500 && orangePoint(1,1) == -500 && yellowPoint(1,1) == -500 && greenPoint(1,1) == -500 && bluePoint(1,1) == -500
             none_present = 1;
         end
